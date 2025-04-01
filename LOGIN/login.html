@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="queexistalaguienasi.css">
+    <link rel="icon" href="logo_industro_.png">
+    <script src="https://kit.fontawesome.com/8fe42e8551.js" crossorigin="anonymous"></script>
+    <title>Industro Login</title>
+</head>
+<body>
+    <div class="MainContenedor"> 
+        <div class="head_container">
+            <img src="logo_industro_.png" alt="" class="logo">
+            <div class="heading">SIGN IN</div>
+        </div>
+        <form action="#" method="post" id="loginForm">
+            <div class="inputIcon">
+                <i class="fa-solid fa-circle-user"></i>
+                <input type="text" class="LoginInput" id="usernameInput" placeholder="Username" required>
+            </div>
+            <div class="inputIcon">
+                <i class="fa-solid fa-key"></i>
+                <input type="password" class="LoginInput" id="passwordInput" placeholder="Password" required>
+            </div>
+            <div class="SelectContenedor">
+                <select name="rol" id="roleSelect" required class="SelectSmall">
+                    <option value="" disabled selected hidden>Charge</option>
+                    <option value="Administrador">Admin</option>
+                    <option value="Empleado">Employee</option>
+                </select>
+                <select name="lang" id="langSelect" class="SelectSmall">
+                    <option value="" disabled selected hidden>Language</option>
+                    <option value="Inglés">ENG</option>
+                    <option value="Español">SPA</option>
+                </select>
+            </div>  
+            <span class="Forgot-Password"><a href="#">Forgot Password?</a></span>    
+            <button type="button" class="LButtom" id="loginButton">Sign In</button>
+        </form>
+    </div>
+    <script src="login_en.js"></script>
+</body>
+</html>
