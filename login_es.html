@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="queexistalaguienasi.css">
+    <link rel="icon" href="logo_industro_.png">
+    <script src="https://kit.fontawesome.com/8fe42e8551.js" crossorigin="anonymous"></script>
+    <title>Industrito Inicio de sesión</title>
+</head>
+<body>
+    <div class="MainContenedor"> 
+        <div class="head_container">
+            <img src="logo_industro_.png" alt="" class="logo">
+            <h1 class="heading">INICIAR SESION</h1>
+        </div>
+        <form action="#" method="post" id="loginForm" class="">
+            <div class="inputIcon">
+                <i class="fa-solid fa-circle-user"></i>
+                <input type="text" class="LoginInput" id="usernameInput" placeholder="Username" required>
+            </div>
+            <div class="inputIcon">
+                <i class="fa-solid fa-key"></i>
+                <input type="password" class="LoginInput" id="passwordInput" placeholder="Password" required>
+            </div>
+            <div class="SelectContenedor">
+                <select name="rol" id="roleSelect" required class="SelectSmall">
+                    <option value="" disabled selected hidden>Cargo</option>
+                    <option value="Administrador">Admin</option>
+                    <option value="Empleado">Empleado</option>
+                </select>
+                <select name="lang" id="langSelect" class="SelectSmall">
+                    <option value="" disabled selected hidden>Idioma</option>
+                     <option value="Español">ESP</option>
+                     <option value="Inglés">ING</option>
+                </select>
+            </div>  
+            <span class="Forgot-Password"><a href="#">¿Olvidaste tu contraseña?</a></span>    
+            <button type="button" class="LButtom" id="loginButton">Sign In</button>
+        </form>
+    </div>
+    <script src="login_es.js"></script>
+</body>
+</html>
