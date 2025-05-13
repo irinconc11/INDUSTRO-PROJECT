@@ -1,0 +1,84 @@
+
+/* CSS temporal aquí para asegurar que se cargue */
+.main-content {
+  padding: 20px;
+  width: 100%;
+}
+
+/* Forzamos que el trigger sea visible en desktop */
+.sidenav-trigger {
+  display: block !important;
+}
+
+.sidenav {
+  width: 300px;
+}
+/* En tu archivo pro.css */
+.nav-custom {
+    background-color: #084D6E !important;
+  }
+  
+  .sidenav-custom {
+    background-color: #F5F5F5 !important;
+  }
+  
+  .background-custom {
+    background-color: #084D6E !important;
+    height: 100px;
+  }
+/* BARRA SUPERIOR COMPLETA */
+.nav-custom {
+    background-color: #084D6E !important;
+    height: 70px; /* Altura aumentada */
+    padding: 0 20px; /* Padding lateral */
+  }
+  
+  /* LOGO INDUSTRO */
+  .brand-logo {
+    color: #FFCC00 !important;
+    font-weight: 700 !important;
+    font-size: 2rem !important; /* Más grande */
+    font-family: 'Roboto', sans-serif; /* Fuente gruesa */
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+    transition: all 0.3s ease;
+    position: relative;
+    top: 2px; /* Ajuste fino de posición vertical */
+  }
+  
+  /* ÍCONO DEL MENÚ */
+  .nav-custom .sidenav-trigger i {
+    color: #FFCC00 !important;
+    font-size: 32px !important; /* Ícono más grande */
+    height: 70px;
+    line-height: 70px !important;
+    margin-right: 15px;
+  }
+  
+ /* Estilos para el formulario */
+ .formulario-produccion {
+    display: none; /* Oculto por defecto */
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 
+                0 3px 1px -2px rgba(0,0,0,0.12), 
+                0 1px 5px 0 rgba(0,0,0,0.2);
+    margin-top: 20px;
+  }
+  
+  .campo-input {
+    margin-bottom: 20px;
+  }
+  
+  .botones-formulario {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+  }
+  
+  /* Estilo para el contenido principal cuando se muestra el formulario */
+  .main-content.con-formulario {
+    padding-top: 20px;
+  }
