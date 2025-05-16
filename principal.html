@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>INDUSTRO - Registro de Producción</title>
+  <!-- Materialize CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <!-- Íconos de Materialize -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="pgEmp.css">
+</head>
+<body>
+  <!-- Barra de navegación superior -->
+  <nav class="nav-custom">
+    <div class="nav-wrapper">
+      <a href="#" data-target="mobile-sidebar" class="sidenav-trigger">
+        <i class="material-icons">menu</i>
+      </a>
+      <a href="#" class="brand-logo">INDUSTRO</a>
+    </div>
+  </nav>
+
+  <!-- Sidebar -->
+  <ul id="mobile-sidebar" class="sidenav sidenav-custom">
+    <li>
+      <div class="user-view">
+        <!-- <div class="background background-custom"></div> -->
+        <a href="#"><span class="white-text name">Usuario</span></a>
+        <a href="#"><span class="white-text email">usuario@example.com</span></a>
+      </div>
+    </li>
+    <li><a href="#!" class="mostrar-formulario"><i class="material-icons">insert_chart</i>Registro de Produccion</a></li>
+    <li><a href="#!"><i class="material-icons">science</i>Mi Analisis</a></li>
+    <li><a href="#!"><i class="material-icons">logout</i>Cerrar sesión</a></li>
+  </ul>
+
+  <!-- Contenido principal -->
+  <!-- <main class="main-content">
+    <div class="container">
+      <h4>Contenido Principal</h4>
+      <p>Aquí va el contenido de tu página.</p> -->
+      
+      <main class="main-content">
+      <div id="formularioProduccion" class="formulario-produccion">
+        <h5>Registro de Producción</h5>
+        
+        <div class="row">
+          <div class="input-field col s6">
+            <input type="date" id="fecha" class="validate" required>
+            <label for="fecha">Fecha</label>
+          </div>
+          
+          <div class="input-field col s6">
+            <input type="time" id="hora" class="validate" required>
+            <label for="hora">Hora</label>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="input-field col s12">
+            <select id="producto" required>
+              <option value="" disabled selected>Seleccione un producto</option>
+              <option value="camisetas">Camisetas</option>
+              <option value="pantalones">Pantalones</option>
+              <option value="vestidos">Vestidos</option>
+              <option value="chaquetas">Chaquetas</option>
+              <option value="sudaderas">Sudaderas</option>
+              <option value="ropa_interior">Ropa interior</option>
+              <option value="uniformes">Uniformes</option>
+              <option value="jeans">Jeans</option>
+              <option value="blusas">Blusas</option>
+              <option value="trajes">Trajes</option>
+            </select>
+            <label>Producto</label>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="cantidad" type="number" class="validate" required min="1">
+            <label for="cantidad">Cantidad</label>
+            <span class="helper-text">Ingrese la cantidad producida</span>
+          </div>
+        </div>
+        
+        <div class="botones-formulario">
+          <button class="btn waves-effect waves-light" type="submit">Listo
+            <i class="material-icons right">check</i>
+          </button>
+          <button class="btn waves-effect waves-light blue" type="button" id="otroProducto">Tengo un producto más
+            <i class="material-icons right">add</i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Inicialización del sidebar
+      var elems = document.querySelectorAll('.sidenav');
+      var instances = M.Sidenav.init(elems, {
+        edge: 'left',
+        draggable: true,
+        preventScrolling: false
+      });
+      
+      // Inicialización del select
+      M.FormSelect.init(document.querySelectorAll('select'));
+      
+      // Mostrar formulario al hacer clic en "Registro de Produccion"
+      document.querySelectorAll('.mostrar-formulario').forEach(function(element) {
+        element.addEventListener('click', function(e) {
+          e.preventDefault();
+          var formulario = document.getElementById('formularioProduccion');
+          formulario.style.display = formulario.style.display === 'block' ? 'none' : 'block';
+          
+          // Opcional: Desplazar el formulario a la vista
+          formulario.scrollIntoView({ behavior: 'smooth' });
+        });
+      });
+      
+      // Forzar visibilidad del trigger
+      document.querySelector('.sidenav-trigger').style.display = 'block';
+      
+      // Evento para el botón "Tengo un producto más"
+      document.getElementById('otroProducto').addEventListener('click', function() {
+        // Aquí puedes agregar lógica para limpiar el formulario o guardar los datos
+        alert('Producto registrado. Puede agregar otro.');
+        document.getElementById('producto').value = '';
+        document.getElementById('cantidad').value = '';
+        M.updateTextFields();
+      });
+    });
+  </script>
+</body>
+</html>

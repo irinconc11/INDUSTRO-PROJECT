@@ -1,0 +1,180 @@
+/* ESTILOS GENERALES */
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #f5f5f5;
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+/* BARRA SUPERIOR */
+.nav-custom {
+  background-color: #084D6E !important;
+  height: 70px;
+  line-height: 70px;
+  padding: 0 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.nav-custom .nav-wrapper {
+  position: relative;
+ 
+}
+
+/* Logo INDUSTRO fijo y separado del ícono del menú */
+.brand-logo {
+  font-family: 'Roboto', sans-serif;
+  color: #FFCC00 !important;
+  font-weight: 700 !important;
+  font-size: 2rem !important;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  text-shadow: 
+    1px 1px 0 #084D6E,
+    2px 2px 4px rgba(0, 0, 0, 0.3);
+  padding-left: 15px !important;
+  transition: all 0.3s ease;
+  position: absolute;
+  left: 70px; /* espacio para el ícono del menú */
+  transform: none !important;
+}
+
+.brand-logo:hover {
+  text-shadow: 
+    1px 1px 0 #084D6E,
+    3px 3px 6px rgba(0, 0, 0, 0.4);
+}
+
+.brand-logo.light-bg {
+  color: #084D6E !important;
+  text-shadow: 
+    1px 1px 0 #FFCC00,
+    2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Ícono del menú */
+.nav-custom .sidenav-trigger i {
+  color: #FFCC00 !important;
+  font-size: 32px !important;
+  height: 70px;
+  line-height: 70px !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+
+.nav-custom .sidenav-trigger i:hover {
+  transform: scale(1.1);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* SIDEBAR */
+.sidenav {
+  width: 300px;
+  background-color: #ffffff !important;
+}
+
+.sidenav-custom {
+  background-color: #ffffff !important;
+}
+
+.sidenav .user-view {
+  padding: 16px 16px 0;
+  background-color: #084D6E !important;
+  color: #ffffff !important;
+}
+
+.sidenav .user-view .name,
+.sidenav .user-view .email {
+  color: #ffffff !important;
+  font-weight: bold;
+}
+
+.sidenav i.material-icons {
+  color: #FFCC00 !important;
+}
+
+.sidenav a {
+  color: #084D6E !important;
+  font-weight: 500;
+}
+
+.sidenav a:hover {
+  background-color: #f1f1f1;
+  color: #084D6E !important;
+}
+
+.sidenav .divider {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.sidenav a.active {
+  background-color: #f1f1f1;
+  color: #084D6E !important;
+}
+
+/* CONTENIDO PRINCIPAL */
+main.main-content {
+  flex: 1 0 auto;
+  padding: 20px;
+  margin-top: 30px; /* <-- este es el que separa del nav */
+}
+
+.formulario-produccion {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.formulario-produccion h5 {
+  color: #084D6E;
+  font-weight: 700;
+  margin-bottom: 30px;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.input-field label {
+  color: #084D6E !important;
+}
+
+.input-field input:focus, 
+.input-field select:focus {
+  border-bottom: 1px solid #FFCC00 !important;
+  box-shadow: 0 1px 0 0 #FFCC00 !important;
+}
+
+.botones-formulario {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40px;
+}
+
+.btn {
+  background-color: #084D6E !important;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn.blue {
+  background-color: #2196F3 !important;
+}
+
+/* RESPONSIVE */
+@media only screen and (max-width: 992px) {
+  .sidenav-trigger {
+    display: block !important;
+  }
+
+  .brand-logo {
+    left: 70px !important;
+    right: auto !important;
+  }
+
+  .formulario-produccion {
+    padding: 20px;
+  }
+}
