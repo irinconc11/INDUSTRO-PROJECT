@@ -1,0 +1,269 @@
+/* Estilos adicionales para el carrusel de análisis */
+.seccion-analisis {
+  display: none;
+  padding: 20px;
+}
+
+.carousel-analisis {
+  height: 450px;
+  margin: 20px 0;
+}
+
+.carousel-item {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.grafica-container {
+  height: 300px;
+  width: 100%;
+}
+
+.carousel-title {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
+
+.carousel-fixed-item {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+.btn-carousel {
+  background-color:#FFCC00 !important;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.indicators {
+  bottom: 10px !important;
+}
+
+.indicators .indicator-item.active {
+  background-color: #2c3e50 !important;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  background-image: url('fondo.png');
+  background-repeat: repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.nav-custom {
+  background-color: #084D6E !important;
+  height: 70px;
+  line-height: 70px;
+  padding: 0 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.nav-custom .nav-wrapper {
+  position: relative;
+}
+
+.nav-custom .sidenav-trigger i {
+  color: #FFCC00 !important;
+  font-size: 32px !important;
+  height: 70px;
+  line-height: 70px !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+
+.nav-custom .sidenav-trigger i:hover {
+  transform: scale(1.1);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.brand-logo {
+  font-family: 'Roboto', sans-serif;
+  color: #FFCC00 !important;
+  font-weight: 700 !important;
+  font-size: 2rem !important;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  text-shadow: 1px 1px 0 #084D6E, 2px 2px 4px rgba(0, 0, 0, 0.3);
+  padding-left: 15px !important;
+  position: absolute;
+  left: 70px;
+  transform: none !important;
+}
+
+.brand-logo:hover {
+  text-shadow: 1px 1px 0 #084D6E, 3px 3px 6px rgba(0, 0, 0, 0.4);
+}
+
+.sidenav {
+  width: 300px;
+  background-color: #ffffff !important;
+}
+
+.sidenav-custom {
+  background-color: #ffffff !important;
+}
+
+.sidenav .user-view {
+  padding: 16px 16px 0;
+  background-color: #084D6E !important;
+  color: #ffffff !important;
+}
+
+.sidenav .user-view .name,
+.sidenav .user-view .email {
+  color: #ffffff !important;
+  font-weight: bold;
+}
+
+.sidenav i.material-icons {
+  color: #FFCC00 !important;
+}
+
+.sidenav a {
+  color: #084D6E !important;
+  font-weight: 500;
+}
+
+.sidenav a:hover {
+  background-color: #f1f1f1;
+  color: #084D6E !important;
+}
+
+.sidenav .divider {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.sidenav a.active {
+  background-color: #f1f1f1;
+  color: #084D6E !important;
+}
+
+main.main-content {
+  flex: 1 0 auto;
+  padding: 20px;
+  margin-top: 30px;
+}
+
+.formulario-produccion {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.formulario-produccion h5 {
+  color: #084D6E;
+  font-weight: 700;
+  margin-bottom: 30px;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.input-field label {
+  color: #084D6E !important;
+}
+
+.input-field input:focus,
+.input-field select:focus {
+  border-bottom: 1px solid #FFCC00 !important;
+  box-shadow: 0 1px 0 0 #FFCC00 !important;
+}
+
+.botones-formulario {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40px;
+}
+
+.btn {
+  background-color: #084D6E !important;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn:hover {
+  color: #084D6E !important;
+  background-color: #FFCC00 !important;
+}
+
+.btn.blue {
+  background-color: #FFCC00 !important;
+  color: #084D6E !important;
+}
+
+.btn.blue:hover {
+  color: #FFCC00 !important;
+  background-color: #084D6E !important;
+}
+
+/* DROPDOWN ESTILO EMPLEADO */
+ul#dropdown-empleado {
+  background-color: #084D6E;
+  border-radius: 4px;
+  min-width: 180px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  z-index: 1002;
+}
+
+ul#dropdown-empleado li > a {
+  color: #FFCC00 !important;
+  font-weight: 500;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+}
+
+ul#dropdown-empleado li > a i.material-icons {
+  color: #FFCC00 !important;
+  margin-right: 10px;
+}
+
+ul#dropdown-empleado li:hover {
+  background-color: #FFCC00;
+}
+
+ul#dropdown-empleado li:hover > a,
+ul#dropdown-empleado li:hover > a i.material-icons {
+  color: #084D6E !important;
+}
+
+.nav-custom .dropdown-trigger {
+  color: #FFCC00 !important;
+  font-weight: 500;
+}
+
+.nav-custom .dropdown-trigger i.material-icons {
+  color: #FFCC00 !important;
+}
+
+/* RESPONSIVE */
+@media only screen and (max-width: 992px) {
+  .sidenav-trigger {
+    display: block !important;
+  }
+
+  .brand-logo {
+    left: 70px !important;
+    right: auto !important;
+  }
+
+  .formulario-produccion {
+    padding: 20px;
+  }
+}
