@@ -49,8 +49,8 @@
     <li><a href="#" class="waves-effect" id="btn-personal"><i class="material-icons">group</i>Gestión de Personal</a></li>
     <li><div class="divider"></div></li>
     <li><a href="#" class="waves-effect" id="btn-produccion"><i class="material-icons">assignment</i>Producción</a></li>
-    <!-- <li><a href="#" class="waves-effect" id="btn-rporte"><i class="material-icons">description</i>Ver reporte</a></li> -->
-    <li><a href="#" class="waves-effect" id="btn-inventario"><i class="material-icons">inventory</i>Gestión de Productos</a></li>
+    <li><a href="#" class="waves-effect" id="btn-productos"><i class="material-icons">shopping_cart</i>Gestión de Productos</a></li>
+    <li><a href="#" class="waves-effect" id="btn-inventario"><i class="material-icons">inventory</i>Inventario de Materiales</a></li>
   </ul>
 
   <!-- Contenido principal -->
@@ -143,7 +143,7 @@
       </div>
     </div>
 
-    <!-- Sección: Gestión de Productos -->
+    <!-- Sección: Gestión de Productos (ORIGINAL - SIN MODIFICAR) -->
     <div id="seccion-productos" class="grafico-container" style="display: none;">
       <div class="card">
         <div class="card-content">
@@ -293,6 +293,142 @@
         </div>
       </div>
     </div>
+
+    <!-- Sección: Inventario de Materiales (NUEVA) -->
+    <div id="seccion-inventario" class="grafico-container" style="display: none;">
+      <div class="card">
+        <div class="card-content">
+          <span class="card-title">Inventario de Materiales</span>
+          
+          <!-- Filtros y búsqueda -->
+          <div class="row">
+            <div class="col s12 m6">
+              <div class="input-field">
+                <input type="text" id="buscar-material" placeholder="Buscar material...">
+                <label for="buscar-material">Buscar Material</label>
+              </div>
+            </div>
+            <div class="col s12 m6">
+              <div class="input-field">
+                <select id="filtro-categoria">
+                  <option value="" selected>Todas las categorías</option>
+                  <option value="tela">Telas</option>
+                  <option value="boton">Botones</option>
+                  <option value="cremallera">Cremalleras</option>
+                  <option value="hilo">Hilos</option>
+                  <option value="otros">Otros materiales</option>
+                </select>
+                <label>Filtrar por categoría</label>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Botones de acción -->
+          <div class="row">
+            <div class="col s12 m4">
+              <a class="waves-effect waves-light btn blue" id="btn-agregar-material" style="width: 100%; margin-bottom: 10px;">
+                <i class="material-icons left">add</i>Agregar Material
+              </a>
+            </div>
+            <div class="col s12 m4">
+              <a class="waves-effect waves-light btn orange" id="btn-reporte-inventario" style="width: 100%; margin-bottom: 10px;">
+                <i class="material-icons left">description</i>Generar Reporte
+              </a>
+            </div>
+            <div class="col s12 m4">
+              <a class="waves-effect waves-light btn green" id="btn-materiales-faltantes" style="width: 100%; margin-bottom: 10px;">
+                <i class="material-icons left">warning</i>Ver Faltantes
+              </a>
+            </div>
+          </div>
+          
+          <!-- Tabla de inventario -->
+          <table class="highlight responsive-table">
+            <thead>
+              <tr>
+                <th>Material</th>
+                <th>Categoría</th>
+                <th>Stock Actual</th>
+                <th>Stock Mínimo</th>
+                <th>Unidad</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Tela de algodón - Blanco</td>
+                <td>Tela</td>
+                <td>150</td>
+                <td>50</td>
+                <td>Metros</td>
+                <td><span class="new badge green" data-badge-caption="Disponible"></span></td>
+                <td>
+                  <a href="#!" class="btn-small blue"><i class="material-icons">edit</i></a>
+                  <a href="#!" class="btn-small red"><i class="material-icons">delete</i></a>
+                </td>
+              </tr>
+              <tr>
+                <td>Botones pequeños - Negro</td>
+                <td>Botón</td>
+                <td>320</td>
+                <td>500</td>
+                <td>Unidades</td>
+                <td><span class="new badge orange" data-badge-caption="Bajo stock"></span></td>
+                <td>
+                  <a href="#!" class="btn-small blue"><i class="material-icons">edit</i></a>
+                  <a href="#!" class="btn-small red"><i class="material-icons">delete</i></a>
+                </td>
+              </tr>
+              <tr>
+                <td>Cremallera invisible - 40cm</td>
+                <td>Cremallera</td>
+                <td>12</td>
+                <td>30</td>
+                <td>Unidades</td>
+                <td><span class="new badge red" data-badge-caption="Faltante"></span></td>
+                <td>
+                  <a href="#!" class="btn-small blue"><i class="material-icons">edit</i></a>
+                  <a href="#!" class="btn-small red"><i class="material-icons">delete</i></a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <!-- Sección de materiales faltantes -->
+          <div id="seccion-faltantes" style="display: none; margin-top: 20px;">
+            <h5>Materiales con Stock Bajo o Faltante</h5>
+            <div class="card red lighten-5">
+              <div class="card-content">
+                <div class="row">
+                  <div class="col s12">
+                    <ul class="collection">
+                      <li class="collection-item">
+                        <span class="badge">5/50</span>
+                        Botones pequeños - Negro
+                      </li>
+                      <li class="collection-item">
+                        <span class="badge">2/30</span>
+                        Cremallera invisible - 40cm
+                      </li>
+                      <li class="collection-item">
+                        <span class="badge">8/30</span>
+                        Hilo de coser - Blanco
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="center-align">
+                  <a class="waves-effect waves-light btn blue" id="btn-solicitar-materiales">
+                    <i class="material-icons left">local_shipping</i>Solicitar Materiales
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Scripts -->
@@ -312,6 +448,10 @@
       var datepicker = document.querySelectorAll('.datepicker');
       M.Datepicker.init(datepicker);
       
+      // Selectores
+      var elemsSelect = document.querySelectorAll('select');
+      M.FormSelect.init(elemsSelect);
+      
       // Mostrar/ocultar secciones principales
       document.getElementById('btn-personal').addEventListener('click', function(e) {
         e.preventDefault();
@@ -327,12 +467,19 @@
         document.getElementById('seccion-bienvenida').style.display = 'none';
       });
       
-      document.getElementById('btn-inventario').addEventListener('click', function(e) {
+      document.getElementById('btn-productos').addEventListener('click', function(e) {
         e.preventDefault();
         hideAllSections();
         document.getElementById('seccion-productos').style.display = 'block';
         document.getElementById('seccion-bienvenida').style.display = 'none';
         hideAllSubsections();
+      });
+      
+      document.getElementById('btn-inventario').addEventListener('click', function(e) {
+        e.preventDefault();
+        hideAllSections();
+        document.getElementById('seccion-inventario').style.display = 'block';
+        document.getElementById('seccion-bienvenida').style.display = 'none';
       });
       
       // Evento para el logo de INDUSTRO
@@ -341,7 +488,7 @@
         showWelcomeSection();
       });
       
-      // Botones de gráficos (actualizado para las nuevas tarjetas)
+      // Botones de gráficos
       var cardsGraficos = document.querySelectorAll('.card-grafico');
       cardsGraficos.forEach(function(card) {
         card.addEventListener('click', function() {
@@ -378,25 +525,35 @@
         hideAllSubsections();
         document.getElementById('subseccion-eliminar').style.display = 'block';
       });
+      
+      // Botones de gestión de inventario
+      document.getElementById('btn-materiales-faltantes').addEventListener('click', function(e) {
+        e.preventDefault();
+        var seccionFaltantes = document.getElementById('seccion-faltantes');
+        if (seccionFaltantes.style.display === 'none') {
+          seccionFaltantes.style.display = 'block';
+        } else {
+          seccionFaltantes.style.display = 'none';
+        }
+      });
     });
     
     function showWelcomeSection() {
-      // Ocultar todas las secciones
       hideAllSections();
-      // Mostrar solo la sección de bienvenida
       document.getElementById('seccion-bienvenida').style.display = 'block';
     }
     
     function hideAllSections() {
-      // Ocultar todas las secciones excepto la de bienvenida
       document.getElementById('seccion-personal').style.display = 'none';
       document.getElementById('seccion-produccion').style.display = 'none';
       document.getElementById('seccion-productos').style.display = 'none';
+      document.getElementById('seccion-inventario').style.display = 'none';
       
-      // Ocultar subsecciones de producción si están visibles
       document.getElementById('grafico-produccion').style.display = 'none';
       document.getElementById('grafico-diario').style.display = 'none';
       document.getElementById('grafico-reconstruccion').style.display = 'none';
+      
+      document.getElementById('seccion-faltantes').style.display = 'none';
     }
     
     function hideAllSubsections() {
