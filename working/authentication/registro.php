@@ -16,47 +16,54 @@
     
 
     if(isset($_POST['registro'])){
-    $nombre= mysqli_real_escape_string($enlace, $_POST['nombre']);
-    $apellido= mysqli_real_escape_string($enlace, $_POST['apellido']);
-    $username= mysqli_real_escape_string($enlace,$_POST['username']);
-    $email= mysqli_real_escape_string($enlace,$_POST['email']);
-    $tipoDocumento= mysqli_real_escape_string($enlace,$_POST['tipoDocumento']);
-    $numeroDocumento= mysqli_real_escape_string($enlace,($_POST['numeroDocumento']));
-    $password = $_POST['password'];
-    $id_rol = (int)$_POST['id_rol'];
-    $mensajeError='';
-    $mensajeExito='';
-    if(strlen($password) < 8){
-        $mensajeError='<div class="alert alert-danger mx-auto custom-alert" role="alert"><b>Error: La contraseña debe tener por lo menos 8 caracteres</div>'; 
-        
-    }else{
-
-        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-        $verificar = $enlace->prepare("SELECT id FROM registro WHERE nomUsuario = ? OR email= ?");
-        $verificar->bind_param("ss", $username, $email);
-        $verificar->execute();
-        $verificar->store_result();
-
-        if($verificar->num_rows > 0){
-             $mensajeError='<div class="alert alert-danger mx-auto custom-alert" role="alert"><b>Error: Usuario o correo ya registrados.</div>'; 
-             
+        $nombre= mysqli_real_escape_string($enlace, $_POST['nombre']);
+        $apellido= mysqli_real_escape_string($enlace, $_POST['apellido']);
+        $username= mysqli_real_escape_string($enlace,$_POST['username']);
+        $email= mysqli_real_escape_string($enlace,$_POST['email']);
+        $tipoDocumento= mysqli_real_escape_string($enlace,$_POST['tipoDocumento']);
+        $numeroDocumento= mysqli_real_escape_string($enlace,($_POST['numeroDocumento']));
+        $password = $_POST['password'];
+        $id_rol = (int)$_POST['id_rol'];
+        $mensajeError='';
+        $mensajeExito='';
+        if(strlen($password) < 8){
+            $mensajeError='<div class="alert alert-danger mx-auto custom-alert" role="alert"><b>Error: La contraseña debe tener por lo menos 8 caracteres</div>'; 
+            
+        }elseif (!preg_match('/[A-Z]/', $password)){
+            $mensajeError = '<div class="alert alert-danger mx-auto custom-alert" role="alert"><b>Error:</b> La contraseña debe contener al menos una letra mayúscula.</div>';
+        }elseif (!preg_match('/[0-9]/', $password)){
+            $mensajeError = '<div class="alert alert-danger mx-auto custom-alert" role="alert"><b>Error:</b> La contraseña debe contener al menos un número.</div>';
+        }elseif (!preg_match('/[\W_]/', $password)){
+            $mensajeError = '<div class="alert alert-danger mx-auto custom-alert" role="alert"><b>Error:</b> La contraseña debe contener al menos un carácter especial.</div>';
         }else{
-            $verificar->close();
-            $stmt= $enlace->prepare("INSERT INTO registro (nombre, apellido, nomUsuario,  email, tipoDocumento, numeroDocumento, password, id_rol)VALUES(?,?,?,?,?,?,?,?)");
 
-            $stmt->bind_param("sssssssi", $nombre, $apellido, $username, $email, $tipoDocumento, $numeroDocumento, $passwordHash, $id_rol);
+            $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+            $verificar = $enlace->prepare("SELECT id FROM registro WHERE nomUsuario = ? OR email= ?");
+            $verificar->bind_param("ss", $username, $email);
+            $verificar->execute();
+            $verificar->store_result();
 
-            if($stmt->execute()){
-                $mensajeExito = '<div class="alert alert-success mx-auto custom-alert" role="alert"><b>Registro exitoso.</b> ¡Ya puedes iniciar sesión!</div>';
-
+            if($verificar->num_rows > 0){
+                $mensajeError='<div class="alert alert-danger mx-auto custom-alert" role="alert"><b>Error: Usuario o correo ya registrados.</div>'; 
+                
             }else{
-                $mensajeError='<div class="alert alert-danger mx-auto custom-alert" role="alert"><b>Error al registrar. </div>'; 
-                echo "<script>alert('Error al registrar: " . addslashes($stmt->error) . "');</script>";
+                $verificar->close();
+                $stmt= $enlace->prepare("INSERT INTO registro (nombre, apellido, nomUsuario,  email, tipoDocumento, numeroDocumento, password, id_rol)VALUES(?,?,?,?,?,?,?,?)");
+
+                $stmt->bind_param("sssssssi", $nombre, $apellido, $username, $email, $tipoDocumento, $numeroDocumento, $passwordHash, $id_rol);
+
+                if($stmt->execute()){
+                    $mensajeExito = '<div class="alert alert-success mx-auto custom-alert" role="alert"><b>Registro exitoso.</b> ¡Ya puedes iniciar sesión!</div>';
+
+                }else{
+                    $mensajeError='<div class="alert alert-danger mx-auto custom-alert" role="alert"><b>Error al registrar. </div>'; 
+                    echo "<script>alert('Error al registrar: " . addslashes($stmt->error) . "');</script>";
+                }
+                $stmt -> close();
             }
-            $stmt -> close();
-        }
+        }        
     }  
-}
+
 ?>
 
 <!DOCTYPE html>
@@ -72,6 +79,7 @@
 </head>
 <body>
     <div class="MainContenedor">
+       
         <div class="head_container">
             <img src="/working/imagenes/logo_industro_.png" alt="Logo Industro" class="logo">
             <div class="heading">REGISTRO DE USUARIO</div>
@@ -80,6 +88,8 @@
             if (!empty($mensajeError)) echo $mensajeError; 
             if (!empty($mensajeExito)) echo $mensajeExito; 
         ?>
+         
+    
         <form action="#" method="post" class="RegistroForm" id="registroForm" name= "industro_uno" autocomplete="off">
             <div class="inputIcon">
                 
@@ -170,11 +180,9 @@ window.onload = function() {
     document.getElementById("langSelect").selectedIndex = 0;
     document.getElementById("terminos").checked = false;
 };
+
 </script>
-
 </body>
-
 </html>
-
 <?php
 

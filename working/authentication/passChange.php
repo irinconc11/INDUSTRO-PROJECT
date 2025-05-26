@@ -26,11 +26,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar'])) {
 
     if (empty($username) || empty($email) || empty($cargo) || empty($clave) || empty($confirmarClave)) {
         $mensajeError = '<div class="alert alert-danger mx-auto custom-alert" role="alert"><b>Error: Faltan campos por rellenar</b></div>';
-    } else if ($clave !== $confirmarClave) {
+    }else if ($clave !== $confirmarClave) {
         $mensajeError = '<div class="alert alert-danger mx-auto custom-alert" role="alert"><b>Las contraseñas ingresadas no coinciden</b></div>';
-    } else if (strlen($clave) < 8) {
+    }else if (strlen($clave) < 8) {
         $mensajeError = '<div class="alert alert-danger mx-auto custom-alert" role="alert"><b>Error: La contraseña debe tener al menos 8 caracteres</b></div>';
-    } else {
+    }else if (!preg_match('/[A-Z]/', $clave)) {
+        $mensajeError = '<div class="alert alert-danger mx-auto custom-alert" role="alert"><b>Error:</b> La contraseña debe contener al menos una letra mayúscula</div>';
+    }else if (!preg_match('/[0-9]/', $clave)) {
+        $mensajeError = '<div class="alert alert-danger mx-auto custom-alert" role="alert"><b>Error:</b> La contraseña debe contener al menos un número</div>';
+    }else if (!preg_match('/[\W_]/', $clave)) {
+        $mensajeError = '<div class="alert alert-danger mx-auto custom-alert" role="alert"><b>Error:</b> La contraseña debe contener al menos un carácter especial</div>';
+    }else {
         $consulta = "SELECT * FROM registro WHERE nomUsuario = ? AND email = ? AND id_rol = ?";
         $stmt = $enlace->prepare($consulta);
         $stmt->bind_param("ssi", $username, $email, $cargo);
