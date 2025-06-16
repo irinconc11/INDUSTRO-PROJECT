@@ -1,4 +1,19 @@
 <?php
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+    $servidor = "localhost";
+    $usuario = "root";
+    $clave = "";
+    $baseDeDatos = "industro_uno";
+
+    $enlace = mysqli_connect($servidor, $usuario, $clave, $baseDeDatos);
+
+    if (!$enlace) {
+        die("Error de conexión: " . mysqli_connect_error());
+    }       
+
+    $enlace -> set_charset("utf8");
+    
 session_start();
 
 if(!isset($_SESSION['usuario'])){
@@ -6,8 +21,8 @@ if(!isset($_SESSION['usuario'])){
   exit(); 
 }
 
-?>
 
+?>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -82,13 +97,100 @@ if(!isset($_SESSION['usuario'])){
       <div class="card">
         <div class="card-content">
           <span class="card-title">Gestión de Personal</span>
-          <div class="input-field">
+          <!-- <div class="input-field">
             <input type="text" id="buscar-personal" placeholder="Buscar personal existente">
             <label for="buscar-personal">Buscar Personal</label>
+          </div> -->
+          <a href="../authentication/registro.php" style="text-decoration: none;">
+            <div class="card blue lighten-5 z-depth-1" style="padding: 20px; margin-top: 20px;">
+              <h6 class="blue-text text-darken-4"><i class="material-icons left">person_add</i>Registrar nuevo personal</h6>
+              <p>Desde esta sección podrás ingresar nuevos empleados a la base de datos de la empresa.</p>
+            </div>
+          </a>
+          <div class="card blue lighten-5 z-depth-1 hoverable" style="padding: 20px; margin-top: 20px; cursor: pointer;"onclick="toggleTablaPersonal()">
+            <h6 class="blue-text text-darken-4">
+              <i class="material-icons left">group</i>Personal Registrado
+            </h6>
+            <p>Visualiza todos los empleados registrados en el sistema.</p>
+            <!-- Texto "MOSTRAR/OCULTAR" como indicador (opcional) -->
+            <div class="blue-text text-darken-2" style="margin-top: 10px;">
+              <!-- <i class="material-icons tiny">touch_app</i> HAZ CLICK PARA MOSTRAR/OCULTAR -->
+            </div>
           </div>
-          <div class="card blue lighten-5 z-depth-1" style="padding: 20px; margin-top: 20px;">
-            <h6 class="blue-text text-darken-4"><i class="material-icons left">person_add</i>Registrar nuevo personal</h6>
-            <p>Desde esta sección podrás ingresar nuevos empleados a la base de datos de la empresa.</p>
+          <div class="tabla_personal" id="tabla_personal" style="display: none;">
+            <table class="table table-hover">
+              <div class="input-field" style="margin-top: 20px;">
+                <input type="text" id="buscar-personal-tabla" placeholder="Buscar por nombre, apellido, usuario...">
+                <label for="buscar-personal-tabla">Buscar en personal registrado</label>
+              </div>
+              <thead>
+                <tr>
+                  <th>id</th>
+                  <th>Nombre</th>
+                  <th>Apellido</th>
+                  <th>Usuario</th>
+                  <th>Correo</th>
+                  <th>Tipo de documento</th>
+                  <th>Documento</th>
+                  <th>Cargo</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php
+                 $sql = "SELECT id, nombre, apellido, nomUsuario, email, tipoDocumento, numeroDocumento, id_rol FROM registro";
+                 $result = mysqli_query($enlace, $sql);
+
+                 if($result && mysqli_num_rows($result) > 0){
+                  while  ($row = mysqli_fetch_assoc($result)){
+                    echo "<tr>
+                      <td>{$row['id']}</td>
+
+                      <td class='editable' data-field='nombre' data-id='{$row['id']}'>{$row['nombre']}</td>
+
+                      <td class='editable' data-field='apellido' data-id='{$row['id']}'>{$row['apellido']}</td>
+
+                      <td class='editable' data-field='nomUsuario' data-id='{$row['id']}'>{$row['nomUsuario']}</td>
+
+                      <td class='editable' data-field='email' data-id='{$row['id']}'>{$row['email']}</td>
+
+
+
+
+                      <td>
+                        <select class='editable-select' data-field='tipoDocumento' data-id='{$row['id']}'>
+
+                          <option value='Cédula de Ciudadanía'".($row['tipoDocumento']=='Cédula de Ciudadanía'?' selected':'').">Cédula de Ciudadanía</option>
+                          
+                          <option value='Tarjeta de Identidad'".($row['tipoDocumento']=='Tarjeta de Identidad'?' selected':'').">Tarjeta de identidad</option>
+
+                          <option value='Pasaporte'".($row['tipoDocumento']=='Pasaporte'?' selected':'').">Pasaporte</option>
+                        </select>
+
+                      </td>
+                      <td class='editable' data-field='numeroDocumento' data-id='{$row['id']}'>{$row['numeroDocumento']}</td>
+                      
+                      <td>
+                        <select class='editable-select' data-field='id_rol' data-id='{$row['id']}'>
+                          <option value='1'".($row['id_rol']==1?' selected':'').">Administrador</option>
+
+                          <option value='2'".($row['id_rol']==2?' selected':'').">Colaborador</option>
+                        </select>
+                      </td>
+                      <td>
+                        <button class='btn-small blue darken-1 save-btn' data-id='{$row['id']}' style='display:none;'>
+                          <i class='material-icons left'>save</i> Guardar
+                        </button>
+                        <button class='btn-small yellow darken-1 delete-btn' data-id='{$row['id']}'>
+                          <i class='material-icons left'>delete</i> Borrar
+                        </button>
+                       </td>
+                    </tr>";
+                  }
+                 }
+                ?>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -253,27 +355,27 @@ if(!isset($_SESSION['usuario'])){
                   <th>Fecha Ingreso</th>
                   <th>Acciones</th>
                 </tr>
+                  <?php
+                    $consulta = "CALL sp_obtener_productos()";
+                    $resultado = mysqli_query($enlace, $consulta);
+
+                    while ($producto = mysqli_fetch_assoc($resultado)) {
+                        echo "<tr>";
+                        echo "<td>" . htmlspecialchars($producto['nomProd']) . "</td>";
+                        echo "<td>" . htmlspecialchars($producto['cantProd']) . "</td>";
+                        
+                        // Si no tienes campo precio en la BD, puedes simularlo así:
+                        $precio = $producto['cantProd'] * 0.50;
+                        echo "<td>$" . number_format($precio, 2) . "</td>";
+                        
+                        echo "<td>" . htmlspecialchars($producto['fechaActu']) . "</td>";
+                        
+                        echo '<td><button class="btn blue"><i class="material-icons">visibility</i></button></td>';
+                        echo "</tr>";
+                    }
+                    mysqli_next_result($enlace);
+                    ?>
               </thead>
-              <tbody>
-                <tr>
-                  <td>Producto Ejemplo 1</td>
-                  <td>50</td>
-                  <td>$25.99</td>
-                  <td>2023-05-15</td>
-                  <td>
-                    <a href="#!" class="btn-small blue"><i class="material-icons">visibility</i></a>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Producto Ejemplo 2</td>
-                  <td>120</td>
-                  <td>$15.50</td>
-                  <td>2023-06-20</td>
-                  <td>
-                    <a href="#!" class="btn-small blue"><i class="material-icons">visibility</i></a>
-                  </td>
-                </tr>
-              </tbody>
             </table>
           </div>
           
@@ -284,7 +386,43 @@ if(!isset($_SESSION['usuario'])){
               <input type="text" id="buscar-actualizar" placeholder="Buscar producto para actualizar...">
               <label for="buscar-actualizar">Buscar Producto</label>
             </div>
-            
+  <table class="product-update-table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Cantidad</th>
+      <th>Fecha Actualización</th>
+      <th>Foto</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php
+    $consulta = "CALL sp_obtener_productos()";
+    $resultado = mysqli_query($enlace, $consulta);
+    
+    while ($producto = mysqli_fetch_assoc($resultado)) {
+      echo '<tr>';
+      echo '<form method="POST" action="">';
+      echo '<td>'.$producto['idProd'].'</td>';
+      echo '<td><input type="text" name="nomProd" value="'.htmlspecialchars($producto['nomProd']).'"></td>';
+      echo '<td><input type="number" name="cantProd" value="'.htmlspecialchars($producto['cantProd']).'"></td>';
+      echo '<td>'.$producto['fechaActu'].'</td>';
+      echo '<td><input type="text" name="foto" value="'.htmlspecialchars($producto['foto'] ?? '').'"></td>';
+      echo '<td>';
+      echo '<input type="hidden" name="accion" value="actualizar">';
+      echo '<input type="hidden" name="idProd" value="'.$producto['idProd'].'">';
+      echo '<button type="submit" class="save-btn">Guardar</button>';
+      echo '<button type="button" class="cancel-btn" onclick="resetForm(this)">Cancelar</button>';
+      echo '</td>';
+      echo '</form>';
+      echo '</tr>';
+    }
+    mysqli_next_result($enlace);
+    ?>
+  </tbody>
+</table>
             <div class="card blue lighten-5" style="padding: 20px; margin-top: 20px;">
               <p>Seleccione un producto de la lista para actualizar sus datos.</p>
             </div>
@@ -406,43 +544,121 @@ if(!isset($_SESSION['usuario'])){
               </tr>
             </tbody>
           </table>
-          
-          <!-- Sección de materiales faltantes -->
-          <div id="seccion-faltantes" style="display: none; margin-top: 20px;">
-            <h5>Materiales con Stock Bajo o Faltante</h5>
-            <div class="card red lighten-5">
-              <div class="card-content">
-                <div class="row">
-                  <div class="col s12">
-                    <ul class="collection">
-                      <li class="collection-item">
-                        <span class="badge">5/50</span>
-                        Botones pequeños - Negro
-                      </li>
-                      <li class="collection-item">
-                        <span class="badge">2/30</span>
-                        Cremallera invisible - 40cm
-                      </li>
-                      <li class="collection-item">
-                        <span class="badge">8/30</span>
-                        Hilo de coser - Blanco
-                      </li>
-                    </ul>
-                  </div>
+          <!-- Sección de materiales faltantes  -->
+        <div id="seccion-faltantes" style="display: none; margin-top: 20px;">
+          <div class="card" style="background-color: #fff8e1 !important;">
+            <div class="card-content">
+              <span class="card-title">Materiales con Stock Bajo o Faltante</span>
+              <div class="row">
+                <div class="col s12">
+                  <ul class="collection">
+                    <li class="collection-item">
+                      <span class="badge">5/50</span>
+                      Botones pequeños - Negro
+                    </li>
+                    <li class="collection-item">
+                      <span class="badge">2/30</span>
+                      Cremallera invisible - 40cm
+                    </li>
+                    <li class="collection-item">
+                      <span class="badge">8/30</span>
+                      Hilo de coser - Blanco
+                    </li>
+                  </ul>
                 </div>
-                <div class="center-align">
-                  <a class="waves-effect waves-light btn blue" id="btn-solicitar-materiales">
-                    <i class="material-icons left">local_shipping</i>Solicitar Materiales
-                  </a>
-                </div>
+              </div>
+              <div class="center-align">
+                <a class="waves-effect waves-light btn blue" id="btn-solicitar-materiales">
+                  <i class="material-icons left">local_shipping</i>Solicitar Materiales
+                </a>
               </div>
             </div>
           </div>
         </div>
+
+       <!-- Sección de materiales faltantes -->
+<div id="seccion-faltantes" style="display: none; margin-top: 20px;">
+  <div class="card" style="background-color: #fff8e1 !important;">
+    <div class="card-content">
+      <span class="card-title">Materiales con Stock Bajo o Faltante</span>
+      <ul class="collection">
+        <li class="collection-item">
+          <span class="badge">5/50</span>
+          Botones pequeños - Negro
+        </li>
+        <li class="collection-item">
+          <span class="badge">2/30</span>
+          Cremallera invisible - 40cm
+        </li>
+        <li class="collection-item">
+          <span class="badge">8/30</span>
+          Hilo de coser - Blanco
+        </li>
+      </ul>
+      <div class="center-align">
+        <a class="waves-effect waves-light btn blue" id="btn-solicitar-materiales">
+          <i class="material-icons left">local_shipping</i>SOLICITAR MATERIALES
+        </a>
       </div>
     </div>
   </div>
-
+</div>
+<!-- Sección de agregar materiales -->
+<div id="agregar-material" style="display: none; margin-top: 20px;">
+  <div class="card" style="background-color: #fff8e1 !important;">
+    <div class="card-content">
+      <span class="card-title">Agregue un material nuevo a inventario</span>
+      
+      <!-- Formulario para agregar material -->
+      <form id="form-agregar-material">
+        <div class="row">
+          <!-- Campo Material -->
+          <div class="input-field col s12">
+            <input id="nombre-material" type="text" class="validate" required>
+            <label for="nombre-material">Material*</label>
+          </div>
+          
+          <!-- Campo Categoría -->
+          <div class="input-field col s12">
+            <input id="categoria-material" type="text" class="validate" required>
+            <label for="categoria-material">Categoría*</label>
+          </div>
+          
+          <!-- Campo Stock Actual -->
+          <div class="input-field col s12 m6">
+            <input id="stock-actual" type="number" min="0" class="validate" required>
+            <label for="stock-actual">Stock Actual*</label>
+          </div>
+          
+          <!-- Campo Stock Mínimo -->
+          <div class="input-field col s12 m6">
+            <input id="stock-minimo" type="number" min="0" class="validate" required>
+            <label for="stock-minimo">Stock Mínimo*</label>
+          </div>
+          
+          <!-- Campo Unidad -->
+          <div class="input-field col s12 m6">
+            <input id="unidad-material" type="text" class="validate" required>
+            <label for="unidad-material">Unidad*</label>
+          </div>
+          
+          <!-- Campo Estado -->
+          <div class="input-field col s12 m6">
+            <input id="estado-material" type="text" class="validate" value="Disponible">
+            <label for="estado-material">Estado</label>
+          </div>
+        </div>
+        
+        <div class="center-align">
+          <button class="waves-effect waves-light btn blue" type="submit">
+            <i class="material-icons left">add</i>AGREGAR MATERIAL
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+      
   <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script>
@@ -549,6 +765,17 @@ if(!isset($_SESSION['usuario'])){
         }
       });
     });
+      // Botones agregar nuevo materiales
+      document.getElementById('btn-agregar-material').addEventListener('click', function(e) {
+        e.preventDefault();
+        var seccionFaltantes = document.getElementById('agregar-material');
+        if (seccionFaltantes.style.display === 'none') {
+          seccionFaltantes.style.display = 'block';
+        } else {
+          seccionFaltantes.style.display = 'none';
+        }
+      });
+    
     
     function showWelcomeSection() {
       hideAllSections();
@@ -580,6 +807,286 @@ if(!isset($_SESSION['usuario'])){
         document.getElementById(id).style.display = 'none';
       });
     }
+
+     function toggleTablaPersonal(){
+      var tabla = document.getElementById("tabla_personal");
+      if (tabla.style.display === "none" || tabla.style.display === "") {
+        tabla.style.display = "block";
+      } else {
+        tabla.style.display = "none";
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const buscarInput = document.getElementById('buscar-personal-tabla');
+    
+    if(buscarInput) {
+      buscarInput.addEventListener('keyup', function() {
+        const valorBusqueda = this.value.toLowerCase();
+        const filas = document.querySelectorAll('#tabla-personal-completa tbody tr');
+        
+        filas.forEach(function(fila) {
+          const textoFila = filav.textContent.toLowerCase();
+          fila.style.display = textoFila.includes(valorBusqueda) ? '' : 'none';
+        });
+      });
+    }
+  });
+
+  function toggleTablaPersonal(){
+      var tabla = document.getElementById("tabla_personal");
+      if (tabla.style.display === "none" || tabla.style.display === "") {
+        tabla.style.display = "block";
+      } else {
+        tabla.style.display = "none";
+      }
+    }
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const buscarInput = document.getElementById('buscar-personal-tabla');
+    
+    if(buscarInput) {
+        buscarInput.addEventListener('keyup', function() {
+            const valorBusqueda = this.value.toLowerCase();
+            const filas = document.querySelectorAll('.tabla_personal tbody tr');
+            
+            filas.forEach(function(fila) {
+               
+                const celdas = fila.querySelectorAll('td');
+                let textoFila = '';
+                
+                celdas.forEach(function(celda) {
+                    textoFila += celda.textContent.toLowerCase() + ' ';
+                });
+                
+                
+                fila.style.display = textoFila.includes(valorBusqueda) ? '' : 'none';
+            });
+        });
+    }
+});
+
+// Función para manejar la edición de campos - Versión corregida
+document.addEventListener('DOMContentLoaded', function() {
+    // Hacer campos editables
+    document.querySelectorAll('.editable').forEach(cell => {
+        cell.addEventListener('click', function(e) {
+            // Evitar que se active el editor si ya hay uno activo
+            if (document.querySelector('.edit-input-active')) {
+                return;
+            }
+            
+            const currentValue = this.textContent.trim();
+            const field = this.getAttribute('data-field');
+            const id = this.getAttribute('data-id');
+            
+            // Guardar referencia al elemento original
+            const originalCell = this;
+            
+            // Crear input temporal
+            const tempInput = document.createElement('input');
+            tempInput.type = 'text';
+            tempInput.className = 'edit-input edit-input-active';
+            tempInput.value = currentValue;
+            
+            // Reemplazar contenido temporalmente
+            this.innerHTML = '';
+            this.appendChild(tempInput);
+            tempInput.focus();
+            
+            // Función para finalizar la edición
+            const finishEditing = () => {
+                const newValue = tempInput.value.trim();
+                originalCell.textContent = newValue;
+                
+                // Mostrar botón de guardar si el valor cambió
+                if (newValue !== currentValue) {
+                    document.querySelector(`.save-btn[data-id="${id}"]`).style.display = 'inline-block';
+                }
+                
+                // Restaurar el evento click
+                originalCell.addEventListener('click', arguments.callee);
+            };
+            
+            // Manejar eventos
+            tempInput.addEventListener('blur', finishEditing);
+            tempInput.addEventListener('keypress', function(e) {
+                if(e.key === 'Enter') {
+                    finishEditing();
+                }
+            });
+            
+            // Eliminar el evento click temporalmente para evitar conflictos
+            originalCell.removeEventListener('click', arguments.callee);
+        });
+    });
+    
+    // Manejar cambios en de que selects 
+    document.querySelectorAll('.editable-select').forEach(select => {
+        select.addEventListener('change', function() {
+            const id = this.getAttribute('data-id');
+            document.querySelector(`.save-btn[data-id="${id}"]`).style.display = 'inline-block';
+        });
+    });
+    
+    // Guardar cambios como tal en sì 
+    document.querySelectorAll('.save-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const id = this.getAttribute('data-id');
+        const data = {
+            id: id,
+            nombre: '',
+            apellido: '',
+            nomUsuario: '',
+            email: '',
+            tipoDocumento: '',
+            numeroDocumento: '',
+            id_rol: ''
+        };
+        
+        // Obtener todos los valores editados
+        document.querySelectorAll(`[data-id="${id}"]`).forEach(element => {
+            const field = element.getAttribute('data-field');
+            if(element.classList.contains('editable')) {
+                data[field] = element.textContent.trim();
+            } else if(element.classList.contains('editable-select')) {
+                data[field] = element.value;
+            }
+        });
+        
+        // Mostrar carga
+        this.innerHTML = '<i class="material-icons">hourglass_empty</i>';
+        
+        // Enviar datos al servidor
+        fetch('/working/procedimientos/actualizar_usuario.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Error en la respuesta del servidor');
+            return response.json();
+            })
+            .then(data => {
+                if(data.success) {
+                    M.toast({
+                        html: 'Usuario actualizado correctamente',
+                        classes: 'green',
+                        displayLength: 2000
+                    });
+                    this.innerHTML = '<i class="material-icons">check</i>';
+                    setTimeout(() => {
+                        this.style.display = 'none';
+                        this.innerHTML = '<i class="material-icons">save</i>';
+                    }, 1000);
+                } else {
+                    throw new Error(data.error || 'Error desconocido');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                this.innerHTML = '<i class="material-icons">save</i>';
+                M.toast({
+                    html: `Error al actualizar: ${error.message}`,
+                    classes: 'red',
+                    displayLength: 4000
+                });
+            });
+        });
+    });
+});
+    
+    // Eliminar usuario
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            
+            if(confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
+                fetch('/working/procedimientos/eliminar_usuario.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({id: id})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success) {
+                        M.toast({html: 'Usuario eliminado correctamente', classes: 'green'});
+                        // Eliminar la fila de la tabla
+                        this.closest('tr').remove();
+                    } else {
+                        M.toast({html: 'Error al eliminar: ' + data.error, classes: 'red'});
+                    }
+                })
+                .catch(error => {
+                    M.toast({html: 'Error: ' + error, classes: 'red'});
+                });
+            }
+        });
+    });
+// Función para confirmar eliminación con estilo
+function confirmarEliminacion(btn) {
+    const id = btn.getAttribute('data-id');
+    const nombre = btn.closest('tr').querySelector('td:nth-child(2)').textContent;
+    
+    // Puedes usar SweetAlert2 para un diálogo más bonito o el confirm nativo
+    if(confirm(`¿Estás seguro de eliminar a ${nombre}? Esta acción no se puede deshacer.`)) {
+        btn.innerHTML = '<i class="material-icons">hourglass_empty</i> Eliminando...';
+        btn.disabled = true;
+        
+        fetch('/working/procedimientos/eliminar_usuario.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({id: id})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                // Animación al eliminar
+                const fila = btn.closest('tr');
+                fila.style.transition = 'all 0.3s';
+                fila.style.opacity = '0';
+                setTimeout(() => fila.remove(), 300);
+                
+                M.toast({
+                    html: `Usuario eliminado correctamente`,
+                    classes: 'green',
+                    displayLength: 2000
+                });
+            } else {
+                throw new Error(data.error || 'Error al eliminar');
+            }
+        })
+        .catch(error => {
+            btn.innerHTML = '<i class="material-icons">delete</i> Borrar';
+            btn.disabled = false;
+            M.toast({
+                html: `Error: ${error.message}`,
+                classes: 'red',
+                displayLength: 4000
+            });
+        });
+    }
+}
+
+// Función para editar fila
+function editarFila(btn) {
+    const fila = btn.closest('tr');
+    // Aquí implementa tu lógica de edición
+    // Muestra el botón Guardar y oculta el de Editar
+    fila.querySelector('.btn-save').style.display = 'inline-block';
+    btn.style.display = 'none';
+}
+
+
   </script>
 </body>
 </html>
+
+

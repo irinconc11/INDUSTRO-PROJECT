@@ -103,7 +103,7 @@ if(!isset($_SESSION['usuario'])){
         </div>
       </div>
       <div class="botones-formulario">
-        <button class="btn waves-effect waves-light" type="submit">Listo
+        <button class="btn waves-effect waves-light" type="button" id="btnRegistrar">Listo
           <i class="material-icons right">check</i>
         </button>
         <button class="btn waves-effect waves-light blue" type="button" id="otroProducto">Tengo un producto más
@@ -291,6 +291,16 @@ if(!isset($_SESSION['usuario'])){
         });
       }
     });
+  </script>
+  <script>
+    document.getElementById('btnRegistrar')addEventListener('click', function(){
+      const datos={
+        fecha: getElementById('fecha');
+        hora: getElementById('hora');
+        producto: getElementById('producto');
+        cantidad: getElementById('cantidad');
+      }
+    })
   </script>
 </body>
 </html>
