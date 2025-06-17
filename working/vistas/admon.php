@@ -286,6 +286,9 @@ if(!isset($_SESSION['usuario'])){
             </div>
           </div>
           
+
+
+
           <!-- Subsección: Crear Producto -->
           <div id="subseccion-crear" style="display: none; margin-top: 20px;">
             <h5>Crear Nuevo Producto</h5>
@@ -308,12 +311,7 @@ if(!isset($_SESSION['usuario'])){
                 </div>
               </div>
               
-              <div class="row">
-                <div class="input-field col s12">
-                  <input id="fecha-ingreso" type="date" class="validate" required>
-                  <label for="fecha-ingreso">Fecha de Ingreso</label>
-                </div>
-              </div>
+
               
               <div class="row">
                 <div class="file-field input-field col s12">
@@ -1085,7 +1083,44 @@ function editarFila(btn) {
 }
 
 
+
+
+
   </script>
+¿<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.getElementById("form-crear-producto");
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    console.log("✅ ¡Se hizo clic en el botón y se capturó el submit!");
+
+    const nombre = document.getElementById("nombre-producto").value;
+    const cantidad = document.getElementById("cantidad").value;
+    const precio = document.getElementById("precio").value;
+    const foto = document.getElementById("foto") ? document.getElementById("foto").value : '';
+
+   fetch("../procedimientos/insertar_producto.php", {
+
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: `nombre=${encodeURIComponent(nombre)}&cantidad=${cantidad}&precio=${precio}&foto=${encodeURIComponent(foto)}`
+    })
+    .then(response => response.text())
+    .then(data => {
+      console.log("📥 Respuesta del servidor:", data);
+      alert(data);
+    })
+    .catch(error => {
+      console.error("❌ Error en fetch:", error);
+    });
+  });
+});
+</script>
+
+
 </body>
 </html>
 
