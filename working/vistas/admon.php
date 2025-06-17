@@ -384,16 +384,22 @@ if(!isset($_SESSION['usuario'])){
               <input type="text" id="buscar-actualizar" placeholder="Buscar producto para actualizar...">
               <label for="buscar-actualizar">Buscar Producto</label>
             </div>
-  <table class="product-update-table">
+            <!-- En la subsección de actualizar producto -->
+<table class="product-update-table" id="tabla-actualizar-producto">
   <thead>
     <tr>
       <th>ID</th>
       <th>Nombre</th>
       <th>Cantidad</th>
+      <th>Precio</th>
       <th>Fecha Actualización</th>
       <th>Foto</th>
       <th>Acciones</th>
     </tr>
+     <div class="card blue lighten-5" style="padding: 20px; margin-top: 20px;">
+              <p>Seleccione un producto de la lista para actualizar sus datos.</p>
+            </div>
+          </div>
   </thead>
   <tbody>
     <?php
@@ -401,31 +407,30 @@ if(!isset($_SESSION['usuario'])){
     $resultado = mysqli_query($enlace, $consulta);
     
     while ($producto = mysqli_fetch_assoc($resultado)) {
-      echo '<tr>';
-      echo '<form method="POST" action="">';
+      echo '<form class="form-actualizar-producto"><tr>';
+
+
       echo '<td>'.$producto['idProd'].'</td>';
-      echo '<td><input type="text" name="nomProd" value="'.htmlspecialchars($producto['nomProd']).'"></td>';
-      echo '<td><input type="number" name="cantProd" value="'.htmlspecialchars($producto['cantProd']).'"></td>';
+      echo '<td><input type="text" name="nomProd" value="'.htmlspecialchars($producto['nomProd']).'" required></td>';
+      echo '<td><input type="number" name="cantProd" value="'.htmlspecialchars($producto['cantProd']).'" required></td>';
+      echo '<td><input type="number" step="0.01" name="precio" value="'.htmlspecialchars($producto['precio'] ?? '').'" required></td>';
       echo '<td>'.$producto['fechaActu'].'</td>';
-      echo '<td><input type="text" name="foto" value="'.htmlspecialchars($producto['foto'] ?? '').'"></td>';
+      echo '<td>
+        <button type="button" onclick="this.nextElementSibling.click()">Subir foto</button>
+        <input type="file" name="foto" accept="image/*" style="display: none;">
+        <input type="hidden" name="foto_antigua" value="'.htmlspecialchars($producto['foto'] ?? '').'">
+      </td>';
       echo '<td>';
-      echo '<input type="hidden" name="accion" value="actualizar">';
       echo '<input type="hidden" name="idProd" value="'.$producto['idProd'].'">';
-      echo '<button type="submit" class="save-btn">Guardar</button>';
-      echo '<button type="button" class="cancel-btn" onclick="resetForm(this)">Cancelar</button>';
+      echo '<button type="submit" class="btn waves-effect waves-light green"><i class="material-icons left">save</i>Guardar</button>';
       echo '</td>';
-      echo '</form>';
-      echo '</tr>';
+      echo '</tr></form>';
+
     }
     mysqli_next_result($enlace);
     ?>
   </tbody>
 </table>
-            <div class="card blue lighten-5" style="padding: 20px; margin-top: 20px;">
-              <p>Seleccione un producto de la lista para actualizar sus datos.</p>
-            </div>
-          </div>
-          
           <!-- Subsección: Eliminar Producto -->
           <div id="subseccion-eliminar" style="display: none; margin-top: 20px;">
             <h5>Eliminar Producto</h5>
@@ -1087,7 +1092,8 @@ function editarFila(btn) {
 
 
   </script>
-¿<script>
+¿
+<script>
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("form-crear-producto");
 
@@ -1119,7 +1125,123 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 </script>
+// Manejar el envío del formulario de actualización
+document.addEventListener('DOMContentLoaded', function() {
+    // Seleccionar todos los formularios de actualización
+    const forms = document.querySelectorAll('.product-update-table form');
+    
+    forms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Mostrar indicador de carga
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="material-icons left">hourglass_empty</i>Guardando...';
+            submitBtn.disabled = true;
+            
+            // Enviar datos mediante fetch
+            fetch(this.action, {
+                method: 'POST',
+                body: new FormData(this)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                // Mostrar mensaje de éxito
+                M.toast({
+                    html: data.mensaje || 'Producto actualizado correctamente',
+                    classes: 'green',
+                    displayLength: 2000
+                });
+                
+                // Restaurar el botón
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            })
+            .catch(error => {
+                M.toast({
+                    html: error.message,
+                    classes: 'red',
+                    displayLength: 4000
+                });
+                
+                // Restaurar el botón
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
+        });
+    });
+});
 
+</script>
+</script>
+<script>
+document.querySelectorAll('.form-actualizar-producto').forEach(form => {
+  form.addEventListener('submit', function (e) {
+    e.preventDefault(); // Evita recarga
+
+    const formData = new FormData(form);
+
+    fetch('/working/procedimientos/actualizar_producto.php', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.text())
+    .then(data => {
+      alert(data); // Mostrar mensaje del procedimiento
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('❌ Error al actualizar producto.');
+    });
+  });
+});
+</script>
+<script>
+document.querySelectorAll('.form-actualizar-producto').forEach(form => {
+  form.addEventListener('submit', function (e) {
+    e.preventDefault(); // Evita recarga
+
+    const formData = new FormData(form);
+
+    fetch('/working/procedimientos/actualizar_producto.php', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.text())
+    .then(data => {
+      alert(data); // Mostrar mensaje del procedimiento
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('❌ Error al actualizar producto.');
+    });
+  });
+});
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const inputBuscar = document.getElementById('buscar-actualizar');
+
+  if (!inputBuscar) return;
+
+  inputBuscar.addEventListener('input', function() {
+    const texto = this.value.toLowerCase();
+    const filas = document.querySelectorAll('#tabla-actualizar-producto tbody tr');
+
+    filas.forEach(fila => {
+      const contenido = fila.textContent.toLowerCase();
+      fila.style.display = contenido.includes(texto) ? '' : 'none';
+    });
+  });
+});
+</script>
+
+
+</script>
 
 </body>
 </html>
