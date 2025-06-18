@@ -389,16 +389,11 @@ if(!isset($_SESSION['usuario'])){
       <th>ID</th>
       <th>Nombre</th>
       <th>Cantidad</th>
-      <th>Precio</th>
+      <th>precio</th>
       <th>Fecha Actualización</th>
       <th>Foto</th>
       <th>Acciones</th>
     </tr>
-    
-            <div class="card blue lighten-5" style="padding: 20px; margin-top: 20px;">
-              <p>Seleccione un producto de la lista para actualizar sus datos.</p>
-            </div>
-          </div>
   </thead>
   <tbody>
     <?php
@@ -427,6 +422,11 @@ if(!isset($_SESSION['usuario'])){
     ?>
   </tbody>
 </table>
+
+            <div class="card blue lighten-5" style="padding: 20px; margin-top: 20px;">
+              <p>Seleccione un producto de la lista para actualizar sus datos.</p>
+            </div>
+          </div>
           
           <!-- Subsección: Eliminar Producto -->
           <div id="subseccion-eliminar" style="display: none; margin-top: 20px;">
