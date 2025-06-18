@@ -361,8 +361,7 @@ if(!isset($_SESSION['usuario'])){
                         echo "<tr>";
                         echo "<td>" . htmlspecialchars($producto['nomProd']) . "</td>";
                         echo "<td>" . htmlspecialchars($producto['cantProd']) . "</td>";
-                        
-                        // Si no tienes campo precio en la BD, puedes simularlo así:
+
                         $precio = $producto['cantProd'] * 0.50;
                         echo "<td>$" . number_format($precio, 2) . "</td>";
                         
@@ -384,8 +383,7 @@ if(!isset($_SESSION['usuario'])){
               <input type="text" id="buscar-actualizar" placeholder="Buscar producto para actualizar...">
               <label for="buscar-actualizar">Buscar Producto</label>
             </div>
-            <!-- En la subsección de actualizar producto -->
-<table class="product-update-table" id="tabla-actualizar-producto">
+  <table class="product-update-table">
   <thead>
     <tr>
       <th>ID</th>
@@ -396,7 +394,8 @@ if(!isset($_SESSION['usuario'])){
       <th>Foto</th>
       <th>Acciones</th>
     </tr>
-     <div class="card blue lighten-5" style="padding: 20px; margin-top: 20px;">
+    
+            <div class="card blue lighten-5" style="padding: 20px; margin-top: 20px;">
               <p>Seleccione un producto de la lista para actualizar sus datos.</p>
             </div>
           </div>
@@ -408,8 +407,6 @@ if(!isset($_SESSION['usuario'])){
     
     while ($producto = mysqli_fetch_assoc($resultado)) {
       echo '<form class="form-actualizar-producto"><tr>';
-
-
       echo '<td>'.$producto['idProd'].'</td>';
       echo '<td><input type="text" name="nomProd" value="'.htmlspecialchars($producto['nomProd']).'" required></td>';
       echo '<td><input type="number" name="cantProd" value="'.htmlspecialchars($producto['cantProd']).'" required></td>';
@@ -425,12 +422,12 @@ if(!isset($_SESSION['usuario'])){
       echo '<button type="submit" class="btn waves-effect waves-light green"><i class="material-icons left">save</i>Guardar</button>';
       echo '</td>';
       echo '</tr></form>';
-
     }
     mysqli_next_result($enlace);
     ?>
   </tbody>
 </table>
+          
           <!-- Subsección: Eliminar Producto -->
           <div id="subseccion-eliminar" style="display: none; margin-top: 20px;">
             <h5>Eliminar Producto</h5>
@@ -1092,7 +1089,6 @@ function editarFila(btn) {
 
 
   </script>
-¿
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("form-crear-producto");
@@ -1125,60 +1121,68 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 </script>
-// Manejar el envío del formulario de actualización
-document.addEventListener('DOMContentLoaded', function() {
-    // Seleccionar todos los formularios de actualización
-    const forms = document.querySelectorAll('.product-update-table form');
-    
-    forms.forEach(form => {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Mostrar indicador de carga
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="material-icons left">hourglass_empty</i>Guardando...';
-            submitBtn.disabled = true;
-            
-            // Enviar datos mediante fetch
-            fetch(this.action, {
-                method: 'POST',
-                body: new FormData(this)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    throw new Error(data.error);
-                }
-                
-                // Mostrar mensaje de éxito
-                M.toast({
-                    html: data.mensaje || 'Producto actualizado correctamente',
-                    classes: 'green',
-                    displayLength: 2000
-                });
-                
-                // Restaurar el botón
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            })
-            .catch(error => {
-                M.toast({
-                    html: error.message,
-                    classes: 'red',
-                    displayLength: 4000
-                });
-                
-                // Restaurar el botón
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            });
+
+
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const btnEliminar = document.getElementById("btn-eliminar-producto");
+  const subseccionEliminar = document.getElementById("subseccion-eliminar");
+  const btnCargarLista = document.getElementById("btn-cargar-lista");
+  const contenedorLista = document.getElementById("lista-productos-eliminar");
+
+  btnEliminar.addEventListener("click", () => {
+    subseccionEliminar.style.display = "block";
+  });
+
+  btnCargarLista.addEventListener("click", () => {
+    fetch("procedimientos/obtener_productos.php")
+      .then(res => res.json())
+      .then(data => {
+        if (!Array.isArray(data)) {
+          contenedorLista.innerHTML = "<p>Error al obtener productos.</p>";
+          return;
+        }
+
+        let html = '<ul class="collection">';
+        data.forEach(prod => {
+          html += `
+            <li class="collection-item">
+              <div>
+                ${prod.nomProd}
+                <button class="btn red right" onclick="eliminarProducto('${prod.nomProd}')">
+                  Eliminar
+                </button>
+              </div>
+            </li>
+          `;
         });
-    });
+        html += '</ul>';
+        contenedorLista.innerHTML = html;
+      });
+  });
 });
 
+function eliminarProducto(nombre) {
+  if (!confirm("¿Estás seguro de eliminar este producto?")) return;
+
+  fetch("procedimientos/eliminar_producto.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: "nombre=" + encodeURIComponent(nombre)
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert(data.mensaje);
+    document.getElementById("btn-cargar-lista").click(); // Recarga lista
+  });
+}
 </script>
-</script>
+
+
+
 <script>
 document.querySelectorAll('.form-actualizar-producto').forEach(form => {
   form.addEventListener('submit', function (e) {
@@ -1241,7 +1245,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 
-</script>
+
 
 </body>
 </html>
