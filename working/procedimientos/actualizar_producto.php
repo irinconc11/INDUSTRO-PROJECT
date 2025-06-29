@@ -1,56 +1,90 @@
-<?php 
-// Conexión
+<?php
+// ----- Configuración inicial crítica -----
+header('Content-Type: application/json; charset=utf-8');
+while (ob_get_level()) ob_end_clean(); // Limpiar buffers de salida
+ob_start();
+
+// ----- Conexión a la base de datos -----
 $servidor = "localhost";
 $usuario = "root";
 $clave = "";
 $baseDeDatos = "industro_uno";
 
-$conexion = new mysqli($servidor, $usuario, $clave, $baseDeDatos);
-$conexion->set_charset("utf8");
+try {
+    $conexion = new mysqli($servidor, $usuario, $clave, $baseDeDatos);
+    $conexion->set_charset("utf8mb4");
 
-if ($conexion->connect_error) {
-    die("❌ Conexión fallida: " . $conexion->connect_error);
-}
-
-// Recoger datos del formulario
-$idProd = $_POST['idProd'];
-$nomProd = $_POST['nomProd'];
-$cantProd = $_POST['cantProd'];
-$precio = $_POST['precio'];
-
-// Manejar la foto
-$fotoNombre = null;
-
-// Verifica si se subió un nuevo archivo
-if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-    $fotoTmp = $_FILES['foto']['tmp_name'];
-    $fotoNombre = basename($_FILES['foto']['name']);
-    
-    // Ruta de destino para guardar la imagen
-    $rutaDestino = '../imagenes_productos/' . $fotoNombre;
-    
-    // Mover la foto subida a la carpeta destino
-    if (!move_uploaded_file($fotoTmp, $rutaDestino)) {
-        echo "❌ Error al mover la imagen al servidor.";
-        exit;
+    if ($conexion->connect_error) {
+        throw new Exception("❌ Error de conexión: " . $conexion->connect_error);
     }
-} else {
-    // Si no se sube imagen, conservar la anterior (si fue enviada)
-    $fotoNombre = $_POST['foto_antigua'] ?? null;
-}
 
-// Llamar al procedimiento almacenado
-$stmt = $conexion->prepare("CALL sp_actualizar_producto(?, ?, ?, ?, ?)");
-$stmt->bind_param("isiis", $idProd, $nomProd, $cantProd, $precio, $fotoNombre);
+    // ----- Validación de datos -----
+    $idProd = isset($_POST['idProd']) ? intval($_POST['idProd']) : null;
+    $nomProd = isset($_POST['nomProd']) ? trim($_POST['nomProd']) : null;
+    $cantProd = isset($_POST['cantProd']) ? intval($_POST['cantProd']) : null;
+    $precio = isset($_POST['precio']) ? floatval($_POST['precio']) : null;
+    $fotoNombre = isset($_POST['foto_antigua']) ? $_POST['foto_antigua'] : null;
 
-if ($stmt->execute()) {
+    if (!$idProd || !$nomProd || !$cantProd || !$precio) {
+        throw new Exception("❌ Datos incompletos");
+    }
+
+    // ----- Manejo de la imagen -----
+    if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+        $carpetaDestino = '../imagenes_productos/';
+        if (!is_dir($carpetaDestino)) mkdir($carpetaDestino, 0777, true);
+        
+        $extension = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
+        $fotoNombre = uniqid() . '.' . $extension;
+        $rutaDestino = $carpetaDestino . $fotoNombre;
+
+        if (!move_uploaded_file($_FILES['foto']['tmp_name'], $rutaDestino)) {
+            throw new Exception("❌ Error al subir la imagen");
+        }
+    }
+
+    // ----- Ejecutar el procedimiento almacenado -----
+    $stmt = $conexion->prepare("CALL sp_actualizar_producto(?, ?, ?, ?, ?)");
+    if (!$stmt) {
+        throw new Exception("❌ Error al preparar la consulta: " . $conexion->error);
+    }
+
+    $stmt->bind_param("isiis", $idProd, $nomProd, $cantProd, $precio, $fotoNombre);
+
+    if (!$stmt->execute()) {
+        throw new Exception("❌ Error al ejecutar: " . $stmt->error);
+    }
+
+    // ----- Limpieza crítica de resultados adicionales -----
+    // 1. Descarta el primer resultado (el SELECT del mensaje)
     $resultado = $stmt->get_result();
-    $mensaje = $resultado->fetch_assoc();
-    echo $mensaje['mensaje'];
-} else {
-    echo "❌ Error al ejecutar el procedimiento.";
-}
+    $mensaje = $resultado ? $resultado->fetch_assoc()['mensaje'] : null;
 
-$stmt->close();
-$conexion->close();
+    // 2. Descarta otros resultados si existen
+    while ($stmt->more_results()) {
+        $stmt->next_result();
+        if ($result = $stmt->get_result()) {
+            while ($result->fetch_row()) {}
+        }
+    }
+
+    // ----- Respuesta JSON limpia -----
+    $response = [
+        "success" => true,
+        "mensaje" => $mensaje ?? "✅ Producto actualizado correctamente"
+    ];
+
+} catch (Exception $e) {
+    $response = [
+        "success" => false,
+        "error" => $e->getMessage()
+    ];
+} finally {
+    // ----- Limpieza final -----
+    if (isset($stmt)) $stmt->close();
+    if (isset($conexion)) $conexion->close();
+    
+    ob_end_clean();
+    die(json_encode($response, JSON_UNESCAPED_UNICODE));
+}
 ?>

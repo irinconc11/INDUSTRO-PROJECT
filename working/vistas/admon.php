@@ -336,7 +336,7 @@ if(!isset($_SESSION['usuario'])){
             </form>
           </div>
           
-          <!-- Subsección: Ver Producto -->
+        
           <div id="subseccion-ver" style="display: none; margin-top: 20px;">
             <h5>Ver Productos</h5>
             <div class="input-field">
@@ -344,7 +344,7 @@ if(!isset($_SESSION['usuario'])){
               <label for="buscar-producto">Buscar Producto</label>
             </div>
             
-            <table class="highlight">
+            <table class="highlight" id="tablaBuscador">
               <thead>
                 <tr>
                   <th>Nombre</th>
@@ -353,6 +353,8 @@ if(!isset($_SESSION['usuario'])){
                   <th>Fecha Ingreso</th>
                   <th>Acciones</th>
                 </tr>
+                </thead>
+                <tbody>
                   <?php
                     $consulta = "CALL sp_obtener_productos()";
                     $resultado = mysqli_query($enlace, $consulta);
@@ -372,7 +374,7 @@ if(!isset($_SESSION['usuario'])){
                     }
                     mysqli_next_result($enlace);
                     ?>
-              </thead>
+              </tbody>
             </table>
           </div>
           
@@ -383,45 +385,50 @@ if(!isset($_SESSION['usuario'])){
               <input type="text" id="buscar-actualizar" placeholder="Buscar producto para actualizar...">
               <label for="buscar-actualizar">Buscar Producto</label>
             </div>
-  <table class="product-update-table">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Nombre</th>
-      <th>Cantidad</th>
-      <th>precio</th>
-      <th>Fecha Actualización</th>
-      <th>Foto</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    <?php
-    $consulta = "CALL sp_obtener_productos()";
-    $resultado = mysqli_query($enlace, $consulta);
-    
-    while ($producto = mysqli_fetch_assoc($resultado)) {
-      echo '<form class="form-actualizar-producto"><tr>';
-      echo '<td>'.$producto['idProd'].'</td>';
-      echo '<td><input type="text" name="nomProd" value="'.htmlspecialchars($producto['nomProd']).'" required></td>';
-      echo '<td><input type="number" name="cantProd" value="'.htmlspecialchars($producto['cantProd']).'" required></td>';
-      echo '<td><input type="number" step="0.01" name="precio" value="'.htmlspecialchars($producto['precio'] ?? '').'" required></td>';
-      echo '<td>'.$producto['fechaActu'].'</td>';
-      echo '<td>
-        <button type="button" onclick="this.nextElementSibling.click()">Subir foto</button>
-        <input type="file" name="foto" accept="image/*" style="display: none;">
-        <input type="hidden" name="foto_antigua" value="'.htmlspecialchars($producto['foto'] ?? '').'">
-      </td>';
-      echo '<td>';
-      echo '<input type="hidden" name="idProd" value="'.$producto['idProd'].'">';
-      echo '<button type="submit" class="btn waves-effect waves-light green"><i class="material-icons left">save</i>Guardar</button>';
-      echo '</td>';
-      echo '</tr></form>';
-    }
-    mysqli_next_result($enlace);
-    ?>
-  </tbody>
-</table>
+              <table class="product-update-table" id="tablaActualizar">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Cantidad</th>
+                  <th>precio</th>
+                  <th>Fecha Actualización</th>
+                  <th>Foto</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+              <?php
+              $consulta = "CALL sp_obtener_productos()";
+              $resultado = mysqli_query($enlace, $consulta);
+
+              while ($producto = mysqli_fetch_assoc($resultado)) {
+                  echo '<form class="form-actualizar-producto" enctype="multipart/form-data">';
+                  echo '<tr>';
+                  echo '<td>'.$producto['idProd'].'<input type="hidden" name="idProd" value="'.$producto['idProd'].'"></td>';
+                  echo '<td><input type="text" name="nomProd" value="'.htmlspecialchars($producto['nomProd']).'" required></td>';
+                  echo '<td><input type="number" name="cantProd" value="'.htmlspecialchars($producto['cantProd']).'" required></td>';
+                  echo '<td><input type="number" step="0.01" name="precio" value="'.htmlspecialchars($producto['precio'] ?? '').'" required></td>';
+                  echo '<td>'.$producto['fechaActu'].'</td>';
+                  echo '<td>
+                          <button type="button" onclick="this.nextElementSibling.click()">Subir foto</button>
+                          <input type="file" name="foto" accept="image/*" style="display: none;">
+                          <input type="hidden" name="foto_antigua" value="'.htmlspecialchars($producto['foto'] ?? '').'">
+                        </td>';
+                  echo '<td>
+                          <button type="submit" class="btn waves-effect waves-light green">
+                            <i class="material-icons left">save</i>Guardar
+                          </button>
+                        </td>';
+                  echo '</tr>';
+                  echo '</form>';
+              }
+
+              mysqli_next_result($enlace);
+              ?>
+              </tbody>
+
+            </table>
 
             <div class="card blue lighten-5" style="padding: 20px; margin-top: 20px;">
               <p>Seleccione un producto de la lista para actualizar sus datos.</p>
@@ -817,6 +824,7 @@ if(!isset($_SESSION['usuario'])){
       }
     }
 
+//VEO, ESTO ES EL BUSCADOR DE VER PERSONAL
     document.addEventListener('DOMContentLoaded', function() {
     const buscarInput = document.getElementById('buscar-personal-tabla');
     
@@ -826,13 +834,71 @@ if(!isset($_SESSION['usuario'])){
         const filas = document.querySelectorAll('#tabla-personal-completa tbody tr');
         
         filas.forEach(function(fila) {
-          const textoFila = filav.textContent.toLowerCase();
+          const textoFila = fila.textContent.toLowerCase();
           fila.style.display = textoFila.includes(valorBusqueda) ? '' : 'none';
         });
       });
     }
   });
-
+//VEO, ESTO ES EL BUSCADOR DE VER PRODUCTO
+  document.addEventListener('DOMContentLoaded', function() {
+    const filtrarProducto = document.getElementById('buscar-producto');
+    
+    if(filtrarProducto) {
+      filtrarProducto.addEventListener('keyup', function() {
+        const resultadoProducto = this.value.toLowerCase();
+        const filitas = document.querySelectorAll('#tablaBuscador tbody tr');
+        
+        filitas.forEach(function(fila) {
+          const textoFilita = fila.textContent.toLowerCase();
+          fila.style.display = textoFilita.includes(resultadoProducto) ? '' : 'none';
+        });
+      });
+    }
+  });
+  // ESTO ES EL BUSCADOR DE ACTUALIZAR PRODUCTO COMO TAL
+document.addEventListener('DOMContentLoaded', function() {
+    const filtrarActualizar = document.getElementById('buscar-actualizar');
+    let timeout;
+    
+    if(filtrarActualizar) {
+        filtrarActualizar.addEventListener('keyup', function() {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                const terminoBusqueda = this.value.toLowerCase();
+                const filas = document.querySelectorAll('#tablaActualizar tbody tr');
+                
+                if(terminoBusqueda === '') {
+                  
+                    filas.forEach(fila => fila.style.display = '');
+                    return;
+                }
+                
+                filas.forEach(function(fila) {
+                    
+                    const nombre = fila.querySelector('input[name="nomProd"]')?.value.toLowerCase() || '';
+                    const cantidad = fila.querySelector('input[name="cantProd"]')?.value.toLowerCase() || '';
+                    const precio = fila.querySelector('input[name="precio"]')?.value.toLowerCase() || '';
+                    const id = fila.querySelector('td:first-child')?.textContent.toLowerCase() || '';
+                    
+                   
+                    const celdas = fila.querySelectorAll('td');
+                    const fechaActualizacion = celdas[4]?.textContent.toLowerCase() || '';
+                    
+                    const coincide = (
+                        nombre.includes(terminoBusqueda) || 
+                        cantidad.includes(terminoBusqueda) || 
+                        precio.includes(terminoBusqueda) || 
+                        id.includes(terminoBusqueda) ||
+                        fechaActualizacion.includes(terminoBusqueda)
+                    );
+                    
+                    fila.style.display = coincide ? '' : 'none';
+                });
+            }, 300); 
+        });
+    }
+});
   function toggleTablaPersonal(){
       var tabla = document.getElementById("tabla_personal");
       if (tabla.style.display === "none" || tabla.style.display === "") {
@@ -867,12 +933,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Función para manejar la edición de campos - Versión corregida
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Hacer campos editables
+    
     document.querySelectorAll('.editable').forEach(cell => {
         cell.addEventListener('click', function(e) {
-            // Evitar que se active el editor si ya hay uno activo
+            
             if (document.querySelector('.edit-input-active')) {
                 return;
             }
@@ -881,35 +947,35 @@ document.addEventListener('DOMContentLoaded', function() {
             const field = this.getAttribute('data-field');
             const id = this.getAttribute('data-id');
             
-            // Guardar referencia al elemento original
+           
             const originalCell = this;
             
-            // Crear input temporal
+            
             const tempInput = document.createElement('input');
             tempInput.type = 'text';
             tempInput.className = 'edit-input edit-input-active';
             tempInput.value = currentValue;
-            
-            // Reemplazar contenido temporalmente
+ 
+
             this.innerHTML = '';
             this.appendChild(tempInput);
             tempInput.focus();
             
-            // Función para finalizar la edición
+       
             const finishEditing = () => {
                 const newValue = tempInput.value.trim();
                 originalCell.textContent = newValue;
                 
-                // Mostrar botón de guardar si el valor cambió
+              
                 if (newValue !== currentValue) {
                     document.querySelector(`.save-btn[data-id="${id}"]`).style.display = 'inline-block';
                 }
                 
-                // Restaurar el evento click
+               
                 originalCell.addEventListener('click', arguments.callee);
             };
             
-            // Manejar eventos
+      
             tempInput.addEventListener('blur', finishEditing);
             tempInput.addEventListener('keypress', function(e) {
                 if(e.key === 'Enter') {
@@ -917,12 +983,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
             
-            // Eliminar el evento click temporalmente para evitar conflictos
+  
             originalCell.removeEventListener('click', arguments.callee);
         });
     });
-    
-    // Manejar cambios en de que selects 
+
     document.querySelectorAll('.editable-select').forEach(select => {
         select.addEventListener('change', function() {
             const id = this.getAttribute('data-id');
@@ -1075,7 +1140,7 @@ function confirmarEliminacion(btn) {
     }
 }
 
-// Función para editar fila
+
 function editarFila(btn) {
     const fila = btn.closest('tr');
     // Aquí implementa tu lógica de edición
@@ -1085,11 +1150,6 @@ function editarFila(btn) {
 }
 
 
-
-
-
-  </script>
-<script>
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("form-crear-producto");
 
@@ -1120,13 +1180,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 });
-</script>
 
 
-
-
-
-<script>
 document.addEventListener("DOMContentLoaded", () => {
   const btnEliminar = document.getElementById("btn-eliminar-producto");
   const subseccionEliminar = document.getElementById("subseccion-eliminar");
@@ -1176,17 +1231,64 @@ function eliminarProducto(nombre) {
   .then(res => res.json())
   .then(data => {
     alert(data.mensaje);
-    document.getElementById("btn-cargar-lista").click(); // Recarga lista
+    document.getElementById("btn-cargar-lista").click();
   });
 }
-</script>
 
-
-
-<script>
 document.querySelectorAll('.form-actualizar-producto').forEach(form => {
   form.addEventListener('submit', function (e) {
-    e.preventDefault(); // Evita recarga
+    e.preventDefault(); 
+
+    const formData = new FormData(form);
+
+    fetch('/working/procedimientos/actualizar_producto.php', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => {
+    if (!response.ok) throw new Error('❌ Error en la respuesta del servidor');
+    return response.text().then(text => {
+        try {
+            return JSON.parse(text.replace(/[“”]/g, '"'));
+        } catch (e) {
+            throw new Error("❌ Respuesta no es JSON válido: " + text);
+        }
+    });
+})
+    .then(data => {
+      const esError = data.success === false;
+
+      M.toast({
+        html: esError ? data.error : data.mensaje,
+        classes: esError ? 'red white-text' : 'green white-text',
+        displayLength: 3000
+      });
+
+      // Cambiar el ícono del botón
+      const boton = form.querySelector('button[type="submit"]');
+      if (boton) {
+        boton.innerHTML = '<i class="material-icons">check</i>';
+        setTimeout(() => {
+          boton.innerHTML = '<i class="material-icons">save</i>';
+        }, 2000);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      M.toast({
+        html: '❌ Error al conectar con el servidor.',
+        classes: 'red white-text',
+        displayLength: 3000
+      });
+    });
+  });
+});
+
+
+
+document.querySelectorAll('.form-actualizar-producto').forEach(form => {
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
 
     const formData = new FormData(form);
 
@@ -1196,7 +1298,7 @@ document.querySelectorAll('.form-actualizar-producto').forEach(form => {
     })
     .then(response => response.text())
     .then(data => {
-      alert(data); // Mostrar mensaje del procedimiento
+      alert(data); 
     })
     .catch(error => {
       console.error('Error:', error);
@@ -1204,29 +1306,7 @@ document.querySelectorAll('.form-actualizar-producto').forEach(form => {
     });
   });
 });
-</script>
-<script>
-document.querySelectorAll('.form-actualizar-producto').forEach(form => {
-  form.addEventListener('submit', function (e) {
-    e.preventDefault(); // Evita recarga
 
-    const formData = new FormData(form);
-
-    fetch('/working/procedimientos/actualizar_producto.php', {
-      method: 'POST',
-      body: formData
-    })
-    .then(response => response.text())
-    .then(data => {
-      alert(data); // Mostrar mensaje del procedimiento
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      alert('❌ Error al actualizar producto.');
-    });
-  });
-});
-<script>
 document.addEventListener('DOMContentLoaded', function() {
   const inputBuscar = document.getElementById('buscar-actualizar');
 
@@ -1243,10 +1323,6 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 </script>
-
-
-
-
 </body>
 </html>
 
