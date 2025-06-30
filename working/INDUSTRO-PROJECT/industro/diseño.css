@@ -1,0 +1,52 @@
+/* Fondo con degradado oscuro */
+body {
+    font-family: Arial, sans-serif;
+    background: url('fondo.jpg') no-repeat center center fixed;
+    background-size: cover; /* Para que se ajuste a la pantalla */
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+/* Contenedor principal del formulario */
+.contenedor {
+    background: #EEFFFF;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px 000000;
+    padding: 30px;
+    width: 350px;
+    text-align: center;
+    border: 5px solid #FFCC00; /* Borde amarillo */
+}
+
+/* Estilo del título */
+h2 {
+    font-size: 20px;
+    color: #000000;
+}
+
+/* Campos del formulario */
+input {
+    width: 100%;
+    padding: 3px;
+    margin: 8px 0;
+    border: 1px solid #D8EEF7;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+/* Botón de enviar */
+button {
+    background: #78c0e0;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+
+button:hover {
+    background: #56a4d3;
+}

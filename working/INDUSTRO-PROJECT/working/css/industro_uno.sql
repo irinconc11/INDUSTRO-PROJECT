@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 04-06-2025 a las 21:01:13
+-- Tiempo de generación: 18-06-2025 a las 06:31:04
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -52,7 +52,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_actualizar_produccion` (IN `p_id
     END IF;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_actualizar_producto` (IN `p_idProd` INT, IN `p_nomProd` VARCHAR(50), IN `p_cantProd` INT, IN `p_foto` VARCHAR(50))   BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_actualizar_producto` (IN `p_idProd` INT, IN `p_nomProd` VARCHAR(50), IN `p_cantProd` INT, IN `p_precio` INT, IN `p_foto` VARCHAR(50))   BEGIN
     DECLARE v_existe INT;
     
     -- 1. Verificar si el producto existe
@@ -65,6 +65,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_actualizar_producto` (IN `p_idPr
             nomProd = p_nomProd,
             cantProd = p_cantProd,
             fechaActu = CURDATE(),  
+            precio= p_precio,
             foto = IFNULL(p_foto, foto)
         WHERE idProd = p_idProd;
         
@@ -85,50 +86,16 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_actualizar_stock` (IN `p_id_mat`
     SELECT CONCAT('✅ Material ID ', p_id_mat, ' actualizado.') AS mensaje;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_actualizar_usuario` (IN `p_id` INT, IN `p_nombre` VARCHAR(50), IN `p_apellido` VARCHAR(50), IN `p_nomUsuario` VARCHAR(50), IN `p_email` VARCHAR(50), IN `p_tipoDocumento` VARCHAR(50), IN `p_numeroDocumento` VARCHAR(50), IN `p_id_rol` INT)   BEGIN
-    DECLARE v_existe INT;
-    
-    -- Verificar si el usuario existe
-    SELECT COUNT(*) INTO v_existe FROM registro WHERE id = p_id;
-    
-    IF v_existe = 1 THEN
-        UPDATE registro SET
-            nombre = p_nombre,
-            apellido = p_apellido,
-            nomUsuario = p_nomUsuario,
-            email = p_email,
-            tipoDocumento = p_tipoDocumento,
-            numeroDocumento = p_numeroDocumento,
-            id_rol = p_id_rol
-        WHERE id = p_id;
-        
-        SELECT 'Usuario actualizado correctamente' AS mensaje;
-    ELSE
-        SELECT 'Error: El usuario no existe' AS mensaje;
-    END IF;
-END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_actualizar_usuario1` (IN `p_id` INT, IN `p_nombre` VARCHAR(50), IN `p_apellido` VARCHAR(50), IN `p_nomUsuario` VARCHAR(50), IN `p_email` VARCHAR(50), IN `p_tipoDocumento` VARCHAR(50), IN `p_numeroDocumento` VARCHAR(50), IN `p_id_rol` INT)   BEGIN
-    DECLARE v_existe INT;
-    
-    -- Verificar si el usuario existe
-    SELECT COUNT(*) INTO v_existe FROM registro WHERE id = p_id;
-    
-    IF v_existe = 1 THEN
-        UPDATE registro SET
-            nombre = p_nombre,
-            apellido = p_apellido,
-            nomUsuario = p_nomUsuario,
-            email = p_email,
-            tipoDocumento = p_tipoDocumento,
-            numeroDocumento = p_numeroDocumento,
-            id_rol = p_id_rol
-        WHERE id = p_id;
-        
-        SELECT 'Usuario actualizado correctamente' AS mensaje;
-    ELSE
-        SELECT 'Error: El usuario no existe' AS mensaje;
-    END IF;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_actualizar_usuario1` (IN `p_id` INT, IN `p_nombre` VARCHAR(100), IN `p_apellido` VARCHAR(100), IN `p_nomUsuario` VARCHAR(50), IN `p_email` VARCHAR(100), IN `p_tipoDocumento` VARCHAR(50), IN `p_numeroDocumento` VARCHAR(20), IN `p_id_rol` INT)   BEGIN
+    UPDATE registro SET
+        nombre = p_nombre,
+        apellido = p_apellido,
+        nomUsuario = p_nomUsuario,
+        email = p_email,
+        tipoDocumento = p_tipoDocumento,
+        numeroDocumento = p_numeroDocumento,
+        id_rol = p_id_rol
+    WHERE id = p_id;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_eliminar_produccion` (IN `p_id_produccion` INT)   BEGIN
@@ -222,9 +189,9 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_insertar_produccion3` (IN `p_id`
     END IF;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_insertar_producto` (IN `p_nombre` VARCHAR(50), IN `p_cantidad` INT, IN `p_foto` VARCHAR(50))   BEGIN
-    INSERT INTO inventario (nomProd, cantProd, fechaActu, foto)
-    VALUES (p_nombre, p_cantidad, CURDATE(), p_foto);
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_insertar_producto` (IN `p_nombre` VARCHAR(50), IN `p_cantidad` INT, IN `p_precio` INT, IN `p_foto` VARCHAR(50))   BEGIN
+    INSERT INTO inventario (nomProd, cantProd, precio,fechaActu, foto)
+    VALUES (p_nombre, p_cantidad,p_precio, CURDATE(), p_foto);
     
     SELECT 'Producto insertado correctamente' AS mensaje, LAST_INSERT_ID() AS id_producto;
 END$$
@@ -279,12 +246,12 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_obtener_produccion_por_empleado`
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_obtener_productos` ()   BEGIN
-    SELECT idProd, nomProd, cantProd, fechaActu, foto
+    SELECT idProd, nomProd, cantProd, fechaActu,precio, foto
     FROM inventario;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_obtener_producto_por_id` (IN `p_id` INT)   BEGIN
-    SELECT idProd, nomProd, cantProd, fechaActu, foto
+    SELECT idProd, nomProd, cantProd, fechaActu,precio, foto
     FROM inventario
     WHERE idProd = p_id;
 END$$
@@ -327,6 +294,7 @@ CREATE TABLE `inventario` (
   `nomProd` varchar(50) NOT NULL,
   `cantProd` int(11) NOT NULL,
   `fechaActu` date NOT NULL,
+  `precio` int(11) NOT NULL,
   `foto` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -334,10 +302,16 @@ CREATE TABLE `inventario` (
 -- Volcado de datos para la tabla `inventario`
 --
 
-INSERT INTO `inventario` (`idProd`, `nomProd`, `cantProd`, `fechaActu`, `foto`) VALUES
-(2, 'Seda', 8470, '2025-06-03', ''),
-(4, 'Juanse', 7000, '2025-06-03', ''),
-(5, 'zapaticos', 10, '2025-05-20', '');
+INSERT INTO `inventario` (`idProd`, `nomProd`, `cantProd`, `fechaActu`, `precio`, `foto`) VALUES
+(2, 'faldasssssssssssssss', 6666666, '2025-06-17', 666666, ''),
+(4, 'boinas', 700, '2025-06-17', 35, ''),
+(5, 'bufandas', 200, '2025-06-17', 188, ''),
+(6, 'cinturones', 500, '2025-06-17', 1000, ''),
+(7, 'bolsos', 100, '2025-06-17', 500, ''),
+(8, 'tacones', 20, '2025-06-17', 50, ''),
+(9, 'camisa', 30, '2025-06-17', 33, ''),
+(10, 'gaban', 100000, '2025-06-17', 100, ''),
+(11, 'corbata', 400, '2025-06-17', 38, '');
 
 -- --------------------------------------------------------
 
@@ -387,8 +361,9 @@ CREATE TABLE `registro` (
 --
 
 INSERT INTO `registro` (`id`, `nombre`, `apellido`, `nomUsuario`, `email`, `tipoDocumento`, `numeroDocumento`, `password`, `id_rol`) VALUES
-(1, 'esagata', 'epelvelsa', 'alahoradelcastigonotienerivelsa', 'mientrasmaslamaltratomasmerecompensa@ismail.com', 'Cédula de Ciudadanía', '1010101010', '$2y$10$quypABgLu38RoJ.uB0QhAOGxRyhCAlrSEbhk4GVmrReSJjNkO.8Pa', 2),
-(4, 'pericardo', 'epelvelsa', 'eyameyamatalde', 'matadol@gmail.com', 'Cédula de Ciudadanía', '1010101010', '$2y$10$MteHjgFcyvUrymiqdYtpUu7ShopBWJ6dqKLRusswgV.Uxta74JALC', 1);
+(1, 'Ismael', 'Rincón', 'ismaelRincon', 'maelrc11@gmail.com', 'Tarjeta de Identidad', '1001331889', '$2y$10$IWmVg1xbVcpZLrs3NntUzua6yJgI3XbiAXJbOJ51ZdKHf4tiuR1oy', 1),
+(2, 'Edgar ', 'Cardona', 'edgarCardona', 'edgar@gmail.com', 'Cédula de Ciudadanía', '123456', '$2y$10$/yEIX4lpRUYaDyfal8JqEOX7NbGTu4U2Qa0yVm/4R0BjsA2Oj5aBO', 2),
+(3, 'alejandra', 'castañeda', 'MALEJAROD12', 'malejarod12@gmail.com', 'Cédula de Ciudadanía', '1034577200', '$2y$10$iX5DVXHdqS70kgn0ez0m2uZIS1JlTRmHemKUYIRYrOrNFo39lOcna', 1);
 
 -- --------------------------------------------------------
 
@@ -479,7 +454,7 @@ ALTER TABLE `stock`
 -- AUTO_INCREMENT de la tabla `inventario`
 --
 ALTER TABLE `inventario`
-  MODIFY `idProd` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `idProd` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT de la tabla `produccion`
@@ -491,7 +466,7 @@ ALTER TABLE `produccion`
 -- AUTO_INCREMENT de la tabla `registro`
 --
 ALTER TABLE `registro`
-  MODIFY `id` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `stock`

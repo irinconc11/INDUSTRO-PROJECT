@@ -21,24 +21,21 @@ $precio = $_POST['precio'];
 // Manejar la foto
 $fotoNombre = null;
 
+// Verifica si se subió un nuevo archivo
 if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
     $fotoTmp = $_FILES['foto']['tmp_name'];
     $fotoNombre = basename($_FILES['foto']['name']);
     
-    // Verifica si la carpeta destino existe, si no, la crea
-    $carpetaDestino = '../imagenes_productos/';
-    if (!is_dir($carpetaDestino)) {
-        mkdir($carpetaDestino, 0777, true);
-    }
-
-    $rutaDestino = $carpetaDestino . $fotoNombre;
-
-    // Mover la foto subida
+    // Ruta de destino para guardar la imagen
+    $rutaDestino = '../imagenes_productos/' . $fotoNombre;
+    
+    // Mover la foto subida a la carpeta destino
     if (!move_uploaded_file($fotoTmp, $rutaDestino)) {
         echo "❌ Error al mover la imagen al servidor.";
         exit;
     }
 } else {
+    // Si no se sube imagen, conservar la anterior (si fue enviada)
     $fotoNombre = $_POST['foto_antigua'] ?? null;
 }
 

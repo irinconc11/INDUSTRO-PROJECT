@@ -336,7 +336,7 @@ if(!isset($_SESSION['usuario'])){
             </form>
           </div>
           
-        
+          <!-- Subsección: Ver Producto -->
           <div id="subseccion-ver" style="display: none; margin-top: 20px;">
             <h5>Ver Productos</h5>
             <div class="input-field">
@@ -344,7 +344,7 @@ if(!isset($_SESSION['usuario'])){
               <label for="buscar-producto">Buscar Producto</label>
             </div>
             
-            <table class="highlight" id="tablaBuscador">
+            <table class="highlight">
               <thead>
                 <tr>
                   <th>Nombre</th>
@@ -353,8 +353,6 @@ if(!isset($_SESSION['usuario'])){
                   <th>Fecha Ingreso</th>
                   <th>Acciones</th>
                 </tr>
-                </thead>
-                <tbody>
                   <?php
                     $consulta = "CALL sp_obtener_productos()";
                     $resultado = mysqli_query($enlace, $consulta);
@@ -374,7 +372,7 @@ if(!isset($_SESSION['usuario'])){
                     }
                     mysqli_next_result($enlace);
                     ?>
-              </tbody>
+              </thead>
             </table>
           </div>
           
@@ -385,135 +383,63 @@ if(!isset($_SESSION['usuario'])){
               <input type="text" id="buscar-actualizar" placeholder="Buscar producto para actualizar...">
               <label for="buscar-actualizar">Buscar Producto</label>
             </div>
-              <table class="product-update-table" id="tablaActualizar">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Nombre</th>
-                  <th>Cantidad</th>
-                  <th>precio</th>
-                  <th>Fecha Actualización</th>
-                  <th>Foto</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-              <?php
-              $consulta = "CALL sp_obtener_productos()";
-              $resultado = mysqli_query($enlace, $consulta);
-
-              while ($producto = mysqli_fetch_assoc($resultado)) {
-                  echo '<tr>';
-                  echo '<form class="form-actualizar-producto">';
-                  echo '<td>'.$producto['idProd'].'<input type="hidden" name="idProd" value="'.$producto['idProd'].'"></td>';
-                  echo '<td><input type="text" name="nomProd" value="'.htmlspecialchars($producto['nomProd']).'" required></td>';
-                  echo '<td><input type="number" name="cantProd" value="'.htmlspecialchars($producto['cantProd']).'" required></td>';
-                  echo '<td><input type="number" step="0.01" name="precio" value="'.htmlspecialchars($producto['precio'] ?? '').'" required></td>';
-                  echo '<td>'.$producto['fechaActu'].'</td>';
-                  echo '<td>
-                          <button type="button" onclick="this.nextElementSibling.click()">Subir foto</button>
-                          <input type="file" name="foto" accept="image/*" style="display: none;">
-                          <input type="hidden" name="foto_antigua" value="'.htmlspecialchars($producto['foto'] ?? '').'">
-                        </td>';
-                  echo '<td>
-                          <button type="submit" class="btn waves-effect waves-light green">
-                            <i class="material-icons left">save</i>Guardar
-                          </button>
-                        </td>';
-                  echo '</form>';
-                  echo '</tr>';
-              }
-              mysqli_next_result($enlace);
-              ?>
-              </tbody>
-
-            </table>
+  <table class="product-update-table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Cantidad</th>
+      <th>precio</th>
+      <th>Fecha Actualización</th>
+      <th>Foto</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php
+    $consulta = "CALL sp_obtener_productos()";
+    $resultado = mysqli_query($enlace, $consulta);
+    
+    while ($producto = mysqli_fetch_assoc($resultado)) {
+      echo '<form class="form-actualizar-producto"><tr>';
+      echo '<td>'.$producto['idProd'].'</td>';
+      echo '<td><input type="text" name="nomProd" value="'.htmlspecialchars($producto['nomProd']).'" required></td>';
+      echo '<td><input type="number" name="cantProd" value="'.htmlspecialchars($producto['cantProd']).'" required></td>';
+      echo '<td><input type="number" step="0.01" name="precio" value="'.htmlspecialchars($producto['precio'] ?? '').'" required></td>';
+      echo '<td>'.$producto['fechaActu'].'</td>';
+      echo '<td>
+        <button type="button" onclick="this.nextElementSibling.click()">Subir foto</button>
+        <input type="file" name="foto" accept="image/*" style="display: none;">
+        <input type="hidden" name="foto_antigua" value="'.htmlspecialchars($producto['foto'] ?? '').'">
+      </td>';
+      echo '<td>';
+      echo '<input type="hidden" name="idProd" value="'.$producto['idProd'].'">';
+      echo '<button type="submit" class="btn waves-effect waves-light green"><i class="material-icons left">save</i>Guardar</button>';
+      echo '</td>';
+      echo '</tr></form>';
+    }
+    mysqli_next_result($enlace);
+    ?>
+  </tbody>
+</table>
 
             <div class="card blue lighten-5" style="padding: 20px; margin-top: 20px;">
               <p>Seleccione un producto de la lista para actualizar sus datos.</p>
             </div>
           </div>
           
-              <!-- Subsección: Eliminar Producto -->
-
-<!-- Subsección: Eliminar Producto -->
-<div id="subseccion-eliminar" style="display: none; margin-top: 20px;">
-    <h5>Eliminar Producto</h5>
-    
-    <div id="mensaje-eliminar"></div>
-    
-    <table class="striped">
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Cantidad</th>
-                <th>Precio</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody id="tabla-productos">
-            <?php
-            $query = "SELECT idProd, nomProd, cantProd FROM inventario";
-            $result = mysqli_query($enlace, $query);
+          <!-- Subsección: Eliminar Producto -->
+          <div id="subseccion-eliminar" style="display: none; margin-top: 20px;">
+            <h5>Eliminar Producto</h5>
+            <div class="input-field">
+              <input type="text" id="buscar-eliminar" placeholder="Buscar producto para eliminar...">
+              <label for="buscar-eliminar">Buscar Producto</label>
+            </div>
             
-            while($row = mysqli_fetch_assoc($result)){
-                echo '<tr id="fila-'.$row['idProd'].'">
-                    <td>'.htmlspecialchars($row['nomProd']).'</td>
-                    <td>'.$row['cantProd'].'</td>
-                    <td>$'.number_format($row['cantProd']*0.5, 2).'</td>
-                    <td>
-                        <button onclick="eliminarProducto('.$row['idProd'].')" 
-                                class="btn red">
-                            <i class="material-icons">delete</i>
-                        </button>
-                    </td>
-                </tr>';
-            }
-            ?>
-        </tbody>
-    </table>
-</div>
-
-<script>
-function eliminarProducto(id) {
-    if(!confirm('¿Seguro que deseas eliminar este producto?')) {
-        return false;
-    }
-
-    var formData = new FormData();
-    formData.append('id', id);
-
-    fetch('/working/procedimientos/eliminar_producto.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        if(data.estado == 'exito') {
-            var fila = document.getElementById('fila-'+id);
-            fila.style.transition = 'opacity 0.5s';
-            fila.style.opacity = '0';
-            setTimeout(function() {
-                fila.remove();
-                document.getElementById('mensaje-eliminar').innerHTML = 
-                    '<div class="card-panel green lighten-4">'+data.mensaje+'</div>';
-            }, 500);
-        } else {
-            document.getElementById('mensaje-eliminar').innerHTML = 
-                '<div class="card-panel red lighten-4">Error: '+data.mensaje+'</div>';
-        }
-    })
-    .catch(error => {
-        console.error("Error en el fetch eliminar_producto:", error);
-        document.getElementById('mensaje-eliminar').innerHTML = 
-            '<div class="card-panel red lighten-4">Error de conexión: ' + error.message + '</div>';
-    });
-
-
-    return false;
-}
-
-</script>
+            <div class="card red lighten-5" style="padding: 20px; margin-top: 20px;">
+              <p>Seleccione un producto de la lista para eliminarlo del sistema.</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -732,166 +658,166 @@ function eliminarProducto(id) {
     </div>
   </div>
 </div>
-<!-- Scripts -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-<script>
-  // Inicialización de componentes de Materialize
-  document.addEventListener('DOMContentLoaded', function() {
-    // Sidebar
-    var sidenav = document.querySelectorAll('.sidenav');
-    M.Sidenav.init(sidenav);
-    
-    // Dropdown
-    var dropdown = document.querySelectorAll('.dropdown-trigger');
-    M.Dropdown.init(dropdown, {coverTrigger: false});
-    
-    // Datepicker
-    var datepicker = document.querySelectorAll('.datepicker');
-    M.Datepicker.init(datepicker);
-    
-    // Selectores
-    var elemsSelect = document.querySelectorAll('select');
-    M.FormSelect.init(elemsSelect);
-    
-    // Mostrar/ocultar secciones principales
-    document.getElementById('btn-personal').addEventListener('click', function(e) {
-      e.preventDefault();
-      hideAllSections();
-      document.getElementById('seccion-personal').style.display = 'block';
-      document.getElementById('seccion-bienvenida').style.display = 'none';
-    });
-    
-    document.getElementById('btn-produccion').addEventListener('click', function(e) {
-      e.preventDefault();
-      hideAllSections();
-      document.getElementById('seccion-produccion').style.display = 'block';
-      document.getElementById('seccion-bienvenida').style.display = 'none';
-    });
-    
-    document.getElementById('btn-productos').addEventListener('click', function(e) {
-      e.preventDefault();
-      hideAllSections();
-      document.getElementById('seccion-productos').style.display = 'block';
-      document.getElementById('seccion-bienvenida').style.display = 'none';
-      hideAllSubsections();
-    });
-    
-    document.getElementById('btn-inventario').addEventListener('click', function(e) {
-      e.preventDefault();
-      hideAllSections();
-      document.getElementById('seccion-inventario').style.display = 'block';
-      document.getElementById('seccion-bienvenida').style.display = 'none';
-    });
-    
-    // Evento para el logo de INDUSTRO
-    document.getElementById('logo-industro').addEventListener('click', function(e) {
-      e.preventDefault();
-      showWelcomeSection();
-    });
-    
-    // Botones de gráficos
-    var cardsGraficos = document.querySelectorAll('.card-grafico');
-    cardsGraficos.forEach(function(card) {
-      card.addEventListener('click', function() {
-        var target = this.getAttribute('data-target');
-        var graficos = document.querySelectorAll('.grafico-container');
-        graficos.forEach(function(grafico) {
-          grafico.style.display = 'none';
+      
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script>
+    // Inicialización de componentes de Materialize
+    document.addEventListener('DOMContentLoaded', function() {
+      // Sidebar
+      var sidenav = document.querySelectorAll('.sidenav');
+      M.Sidenav.init(sidenav);
+      
+      // Dropdown
+      var dropdown = document.querySelectorAll('.dropdown-trigger');
+      M.Dropdown.init(dropdown, {coverTrigger: false});
+      
+      // Datepicker
+      var datepicker = document.querySelectorAll('.datepicker');
+      M.Datepicker.init(datepicker);
+      
+      // Selectores
+      var elemsSelect = document.querySelectorAll('select');
+      M.FormSelect.init(elemsSelect);
+      
+      // Mostrar/ocultar secciones principales
+      document.getElementById('btn-personal').addEventListener('click', function(e) {
+        e.preventDefault();
+        hideAllSections();
+        document.getElementById('seccion-personal').style.display = 'block';
+        document.getElementById('seccion-bienvenida').style.display = 'none';
+      });
+      
+      document.getElementById('btn-produccion').addEventListener('click', function(e) {
+        e.preventDefault();
+        hideAllSections();
+        document.getElementById('seccion-produccion').style.display = 'block';
+        document.getElementById('seccion-bienvenida').style.display = 'none';
+      });
+      
+      document.getElementById('btn-productos').addEventListener('click', function(e) {
+        e.preventDefault();
+        hideAllSections();
+        document.getElementById('seccion-productos').style.display = 'block';
+        document.getElementById('seccion-bienvenida').style.display = 'none';
+        hideAllSubsections();
+      });
+      
+      document.getElementById('btn-inventario').addEventListener('click', function(e) {
+        e.preventDefault();
+        hideAllSections();
+        document.getElementById('seccion-inventario').style.display = 'block';
+        document.getElementById('seccion-bienvenida').style.display = 'none';
+      });
+      
+      // Evento para el logo de INDUSTRO
+      document.getElementById('logo-industro').addEventListener('click', function(e) {
+        e.preventDefault();
+        showWelcomeSection();
+      });
+      
+      // Botones de gráficos
+      var cardsGraficos = document.querySelectorAll('.card-grafico');
+      cardsGraficos.forEach(function(card) {
+        card.addEventListener('click', function() {
+          var target = this.getAttribute('data-target');
+          var graficos = document.querySelectorAll('.grafico-container');
+          graficos.forEach(function(grafico) {
+            grafico.style.display = 'none';
+          });
+          document.getElementById(target).style.display = 'block';
         });
-        document.getElementById(target).style.display = 'block';
+      });
+      
+      // Botones de gestión de productos
+      document.getElementById('btn-crear-producto').addEventListener('click', function(e) {
+        e.preventDefault();
+        hideAllSubsections();
+        document.getElementById('subseccion-crear').style.display = 'block';
+      });
+      
+      document.getElementById('btn-ver-producto').addEventListener('click', function(e) {
+        e.preventDefault();
+        hideAllSubsections();
+        document.getElementById('subseccion-ver').style.display = 'block';
+      });
+      
+      document.getElementById('btn-actualizar-producto').addEventListener('click', function(e) {
+        e.preventDefault();
+        hideAllSubsections();
+        document.getElementById('subseccion-actualizar').style.display = 'block';
+      });
+      
+      document.getElementById('btn-eliminar-producto').addEventListener('click', function(e) {
+        e.preventDefault();
+        hideAllSubsections();
+        document.getElementById('subseccion-eliminar').style.display = 'block';
+      });
+      
+      // Botones de gestión de inventario
+      document.getElementById('btn-materiales-faltantes').addEventListener('click', function(e) {
+        e.preventDefault();
+        var seccionFaltantes = document.getElementById('seccion-faltantes');
+        if (seccionFaltantes.style.display === 'none') {
+          seccionFaltantes.style.display = 'block';
+        } else {
+          seccionFaltantes.style.display = 'none';
+        }
       });
     });
+      // Botones agregar nuevo materiales
+      document.getElementById('btn-agregar-material').addEventListener('click', function(e) {
+        e.preventDefault();
+        var seccionFaltantes = document.getElementById('agregar-material');
+        if (seccionFaltantes.style.display === 'none') {
+          seccionFaltantes.style.display = 'block';
+        } else {
+          seccionFaltantes.style.display = 'none';
+        }
+      });
     
-    // Botones de gestión de productos
-    document.getElementById('btn-crear-producto').addEventListener('click', function(e) {
-      e.preventDefault();
-      hideAllSubsections();
-      document.getElementById('subseccion-crear').style.display = 'block';
-    });
     
-    document.getElementById('btn-ver-producto').addEventListener('click', function(e) {
-      e.preventDefault();
-      hideAllSubsections();
-      document.getElementById('subseccion-ver').style.display = 'block';
-    });
-    
-    document.getElementById('btn-actualizar-producto').addEventListener('click', function(e) {
-      e.preventDefault();
-      hideAllSubsections();
-      document.getElementById('subseccion-actualizar').style.display = 'block';
-    });
-    
-    document.getElementById('btn-eliminar-producto').addEventListener('click', function(e) {
-      e.preventDefault();
-      hideAllSubsections();
-      document.getElementById('subseccion-eliminar').style.display = 'block';
-    });
-    
-    // Botones de gestión de inventario
-    document.getElementById('btn-materiales-faltantes').addEventListener('click', function(e) {
-      e.preventDefault();
-      var seccionFaltantes = document.getElementById('seccion-faltantes');
-      if (seccionFaltantes.style.display === 'none') {
-        seccionFaltantes.style.display = 'block';
-      } else {
-        seccionFaltantes.style.display = 'none';
-      }
-    });
-    
-    // Botones agregar nuevo materiales
-    document.getElementById('btn-agregar-material').addEventListener('click', function(e) {
-      e.preventDefault();
-      var seccionFaltantes = document.getElementById('agregar-material');
-      if (seccionFaltantes.style.display === 'none') {
-        seccionFaltantes.style.display = 'block';
-      } else {
-        seccionFaltantes.style.display = 'none';
-      }
-    });
-  });
-
-  function showWelcomeSection() {
-    hideAllSections();
-    document.getElementById('seccion-bienvenida').style.display = 'block';
-  }
-  
-  function hideAllSections() {
-    document.getElementById('seccion-personal').style.display = 'none';
-    document.getElementById('seccion-produccion').style.display = 'none';
-    document.getElementById('seccion-productos').style.display = 'none';
-    document.getElementById('seccion-inventario').style.display = 'none';
-    
-    document.getElementById('grafico-produccion').style.display = 'none';
-    document.getElementById('grafico-diario').style.display = 'none';
-    document.getElementById('grafico-reconstruccion').style.display = 'none';
-    
-    document.getElementById('seccion-faltantes').style.display = 'none';
-  }
-  
-  function hideAllSubsections() {
-    var subsections = [
-      'subseccion-crear',
-      'subseccion-ver',
-      'subseccion-actualizar',
-      'subseccion-eliminar'
-    ]; 
-    
-    subsections.forEach(function(id) {
-      document.getElementById(id).style.display = 'none';
-    });
-  }
-
-  function toggleTablaPersonal() {
-    var tabla = document.getElementById("tabla_personal");
-    if (tabla.style.display === "none" || tabla.style.display === "") {
-      tabla.style.display = "block";
-    } else {
-      tabla.style.display = "none";
+    function showWelcomeSection() {
+      hideAllSections();
+      document.getElementById('seccion-bienvenida').style.display = 'block';
     }
-  }
+    
+    function hideAllSections() {
+      document.getElementById('seccion-personal').style.display = 'none';
+      document.getElementById('seccion-produccion').style.display = 'none';
+      document.getElementById('seccion-productos').style.display = 'none';
+      document.getElementById('seccion-inventario').style.display = 'none';
+      
+      document.getElementById('grafico-produccion').style.display = 'none';
+      document.getElementById('grafico-diario').style.display = 'none';
+      document.getElementById('grafico-reconstruccion').style.display = 'none';
+      
+      document.getElementById('seccion-faltantes').style.display = 'none';
+    }
+    
+    function hideAllSubsections() {
+      var subsections = [
+        'subseccion-crear',
+        'subseccion-ver',
+        'subseccion-actualizar',
+        'subseccion-eliminar'
+      ]; 
+      
+      subsections.forEach(function(id) {
+        document.getElementById(id).style.display = 'none';
+      });
+    }
 
-  // BUSCADOR DE VER PERSONAL
-  document.addEventListener('DOMContentLoaded', function() {
+     function toggleTablaPersonal(){
+      var tabla = document.getElementById("tabla_personal");
+      if (tabla.style.display === "none" || tabla.style.display === "") {
+        tabla.style.display = "block";
+      } else {
+        tabla.style.display = "none";
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
     const buscarInput = document.getElementById('buscar-personal-tabla');
     
     if(buscarInput) {
@@ -900,416 +826,428 @@ function eliminarProducto(id) {
         const filas = document.querySelectorAll('#tabla-personal-completa tbody tr');
         
         filas.forEach(function(fila) {
-          const textoFila = fila.textContent.toLowerCase();
+          const textoFila = filav.textContent.toLowerCase();
           fila.style.display = textoFila.includes(valorBusqueda) ? '' : 'none';
         });
       });
     }
   });
 
-  // BUSCADOR DE VER PRODUCTO
-  document.addEventListener('DOMContentLoaded', function() {
-    const filtrarProducto = document.getElementById('buscar-producto');
-    
-    if(filtrarProducto) {
-      filtrarProducto.addEventListener('keyup', function() {
-        const resultadoProducto = this.value.toLowerCase();
-        const filitas = document.querySelectorAll('#tablaBuscador tbody tr');
-        
-        filitas.forEach(function(fila) {
-          const textoFilita = fila.textContent.toLowerCase();
-          fila.style.display = textoFilita.includes(resultadoProducto) ? '' : 'none';
-        });
-      });
+  function toggleTablaPersonal(){
+      var tabla = document.getElementById("tabla_personal");
+      if (tabla.style.display === "none" || tabla.style.display === "") {
+        tabla.style.display = "block";
+      } else {
+        tabla.style.display = "none";
+      }
     }
-  });
 
-  // BUSCADOR DE ACTUALIZAR PRODUCTO
-  document.addEventListener('DOMContentLoaded', function() {
-    const filtrarActualizar = document.getElementById('buscar-actualizar');
-    let timeout;
-    
-    if(filtrarActualizar) {
-      filtrarActualizar.addEventListener('keyup', function() {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-          const terminoBusqueda = this.value.toLowerCase();
-          const filas = document.querySelectorAll('#tablaActualizar tbody tr');
-          
-          if(terminoBusqueda === '') {
-            filas.forEach(fila => fila.style.display = '');
-            return;
-          }
-          
-          filas.forEach(function(fila) {
-            const nombre = fila.querySelector('input[name="nomProd"]')?.value.toLowerCase() || '';
-            const cantidad = fila.querySelector('input[name="cantProd"]')?.value.toLowerCase() || '';
-            const precio = fila.querySelector('input[name="precio"]')?.value.toLowerCase() || '';
-            const id = fila.querySelector('td:first-child')?.textContent.toLowerCase() || '';
-            
-            const celdas = fila.querySelectorAll('td');
-            const fechaActualizacion = celdas[4]?.textContent.toLowerCase() || '';
-            
-            const coincide = (
-              nombre.includes(terminoBusqueda) || 
-              cantidad.includes(terminoBusqueda) || 
-              precio.includes(terminoBusqueda) || 
-              id.includes(terminoBusqueda) ||
-              fechaActualizacion.includes(terminoBusqueda)
-            );
-            
-            fila.style.display = coincide ? '' : 'none';
-          });
-        }, 300);
-      });
-    }
-  });
 
-  // BUSCADOR DE PERSONAL (segunda implementación)
-  document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
     const buscarInput = document.getElementById('buscar-personal-tabla');
     
     if(buscarInput) {
-      buscarInput.addEventListener('keyup', function() {
-        const valorBusqueda = this.value.toLowerCase();
-        const filas = document.querySelectorAll('.tabla_personal tbody tr');
-        
-        filas.forEach(function(fila) {
-          const celdas = fila.querySelectorAll('td');
-          let textoFila = '';
-          
-          celdas.forEach(function(celda) {
-            textoFila += celda.textContent.toLowerCase() + ' ';
-          });
-          
-          fila.style.display = textoFila.includes(valorBusqueda) ? '' : 'none';
+        buscarInput.addEventListener('keyup', function() {
+            const valorBusqueda = this.value.toLowerCase();
+            const filas = document.querySelectorAll('.tabla_personal tbody tr');
+            
+            filas.forEach(function(fila) {
+               
+                const celdas = fila.querySelectorAll('td');
+                let textoFila = '';
+                
+                celdas.forEach(function(celda) {
+                    textoFila += celda.textContent.toLowerCase() + ' ';
+                });
+                
+                
+                fila.style.display = textoFila.includes(valorBusqueda) ? '' : 'none';
+            });
         });
-      });
     }
-  });
+});
 
-  // Función para manejar la edición de campos
-  document.addEventListener('DOMContentLoaded', function() {
+// Función para manejar la edición de campos - Versión corregida
+document.addEventListener('DOMContentLoaded', function() {
     // Hacer campos editables
     document.querySelectorAll('.editable').forEach(cell => {
-      cell.addEventListener('click', function(e) {
-        if (document.querySelector('.edit-input-active')) {
-          return;
-        }
-        
-        const currentValue = this.textContent.trim();
-        const field = this.getAttribute('data-field');
-        const id = this.getAttribute('data-id');
-        const originalCell = this;
-        
-        const tempInput = document.createElement('input');
-        tempInput.type = 'text';
-        tempInput.className = 'edit-input edit-input-active';
-        tempInput.value = currentValue;
-        
-        this.innerHTML = '';
-        this.appendChild(tempInput);
-        tempInput.focus();
-        
-        const finishEditing = () => {
-          const newValue = tempInput.value.trim();
-          originalCell.textContent = newValue;
-          
-          if (newValue !== currentValue) {
-            document.querySelector(`.save-btn[data-id="${id}"]`).style.display = 'inline-block';
-          }
-          
-          originalCell.addEventListener('click', arguments.callee);
-        };
-        
-        tempInput.addEventListener('blur', finishEditing);
-        tempInput.addEventListener('keypress', function(e) {
-          if(e.key === 'Enter') {
-            finishEditing();
-          }
+        cell.addEventListener('click', function(e) {
+            // Evitar que se active el editor si ya hay uno activo
+            if (document.querySelector('.edit-input-active')) {
+                return;
+            }
+            
+            const currentValue = this.textContent.trim();
+            const field = this.getAttribute('data-field');
+            const id = this.getAttribute('data-id');
+            
+            // Guardar referencia al elemento original
+            const originalCell = this;
+            
+            // Crear input temporal
+            const tempInput = document.createElement('input');
+            tempInput.type = 'text';
+            tempInput.className = 'edit-input edit-input-active';
+            tempInput.value = currentValue;
+            
+            // Reemplazar contenido temporalmente
+            this.innerHTML = '';
+            this.appendChild(tempInput);
+            tempInput.focus();
+            
+            // Función para finalizar la edición
+            const finishEditing = () => {
+                const newValue = tempInput.value.trim();
+                originalCell.textContent = newValue;
+                
+                // Mostrar botón de guardar si el valor cambió
+                if (newValue !== currentValue) {
+                    document.querySelector(`.save-btn[data-id="${id}"]`).style.display = 'inline-block';
+                }
+                
+                // Restaurar el evento click
+                originalCell.addEventListener('click', arguments.callee);
+            };
+            
+            // Manejar eventos
+            tempInput.addEventListener('blur', finishEditing);
+            tempInput.addEventListener('keypress', function(e) {
+                if(e.key === 'Enter') {
+                    finishEditing();
+                }
+            });
+            
+            // Eliminar el evento click temporalmente para evitar conflictos
+            originalCell.removeEventListener('click', arguments.callee);
         });
-        
-        originalCell.removeEventListener('click', arguments.callee);
-      });
     });
     
-    // Manejar cambios en selects
+    // Manejar cambios en de que selects 
     document.querySelectorAll('.editable-select').forEach(select => {
-      select.addEventListener('change', function() {
-        const id = this.getAttribute('data-id');
-        document.querySelector(`.save-btn[data-id="${id}"]`).style.display = 'inline-block';
-      });
+        select.addEventListener('change', function() {
+            const id = this.getAttribute('data-id');
+            document.querySelector(`.save-btn[data-id="${id}"]`).style.display = 'inline-block';
+        });
     });
     
-    // Guardar cambios
+    // Guardar cambios como tal en sì 
     document.querySelectorAll('.save-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
+    btn.addEventListener('click', function() {
         const id = this.getAttribute('data-id');
         const data = {
-          id: id,
-          nombre: '',
-          apellido: '',
-          nomUsuario: '',
-          email: '',
-          tipoDocumento: '',
-          numeroDocumento: '',
-          id_rol: ''
+            id: id,
+            nombre: '',
+            apellido: '',
+            nomUsuario: '',
+            email: '',
+            tipoDocumento: '',
+            numeroDocumento: '',
+            id_rol: ''
         };
         
+        // Obtener todos los valores editados
         document.querySelectorAll(`[data-id="${id}"]`).forEach(element => {
-          const field = element.getAttribute('data-field');
-          if(element.classList.contains('editable')) {
-            data[field] = element.textContent.trim();
-          } else if(element.classList.contains('editable-select')) {
-            data[field] = element.value;
-          }
+            const field = element.getAttribute('data-field');
+            if(element.classList.contains('editable')) {
+                data[field] = element.textContent.trim();
+            } else if(element.classList.contains('editable-select')) {
+                data[field] = element.value;
+            }
         });
         
+        // Mostrar carga
         this.innerHTML = '<i class="material-icons">hourglass_empty</i>';
         
+        // Enviar datos al servidor
         fetch('/working/procedimientos/actualizar_usuario.php', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data)
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
         })
         .then(response => {
-          if (!response.ok) throw new Error('Error en la respuesta del servidor');
-          return response.json();
-        })
-        .then(data => {
-          if(data.success) {
-            M.toast({
-              html: 'Usuario actualizado correctamente',
-              classes: 'green',
-              displayLength: 2000
+            if (!response.ok) throw new Error('Error en la respuesta del servidor');
+            return response.json();
+            })
+            .then(data => {
+                if(data.success) {
+                    M.toast({
+                        html: 'Usuario actualizado correctamente',
+                        classes: 'green',
+                        displayLength: 2000
+                    });
+                    this.innerHTML = '<i class="material-icons">check</i>';
+                    setTimeout(() => {
+                        this.style.display = 'none';
+                        this.innerHTML = '<i class="material-icons">save</i>';
+                    }, 1000);
+                } else {
+                    throw new Error(data.error || 'Error desconocido');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                this.innerHTML = '<i class="material-icons">save</i>';
+                M.toast({
+                    html: `Error al actualizar: ${error.message}`,
+                    classes: 'red',
+                    displayLength: 4000
+                });
             });
-            this.innerHTML = '<i class="material-icons">check</i>';
-            setTimeout(() => {
-              this.style.display = 'none';
-              this.innerHTML = '<i class="material-icons">save</i>';
-            }, 1000);
-          } else {
-            throw new Error(data.error || 'Error desconocido');
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          this.innerHTML = '<i class="material-icons">save</i>';
-          M.toast({
-            html: `Error al actualizar: ${error.message}`,
-            classes: 'red',
-            displayLength: 4000
-          });
         });
-      });
     });
+});
     
     // Eliminar usuario
     document.querySelectorAll('.delete-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const id = this.getAttribute('data-id');
-        
-        if(confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
-          fetch('/working/procedimientos/eliminar_usuario.php', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({id: id})
-          })
-          .then(response => response.json())
-          .then(data => {
-            if(data.success) {
-              M.toast({html: 'Usuario eliminado correctamente', classes: 'green'});
-              this.closest('tr').remove();
-            } else {
-              M.toast({html: 'Error al eliminar: ' + data.error, classes: 'red'});
+        btn.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            
+            if(confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
+                fetch('/working/procedimientos/eliminar_usuario.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({id: id})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success) {
+                        M.toast({html: 'Usuario eliminado correctamente', classes: 'green'});
+                        // Eliminar la fila de la tabla
+                        this.closest('tr').remove();
+                    } else {
+                        M.toast({html: 'Error al eliminar: ' + data.error, classes: 'red'});
+                    }
+                })
+                .catch(error => {
+                    M.toast({html: 'Error: ' + error, classes: 'red'});
+                });
             }
-          })
-          .catch(error => {
-            M.toast({html: 'Error: ' + error, classes: 'red'});
-          });
-        }
-      });
+        });
     });
-  });
-
-  // Función para confirmar eliminación con estilo
-  function confirmarEliminacion(btn) {
+// Función para confirmar eliminación con estilo
+function confirmarEliminacion(btn) {
     const id = btn.getAttribute('data-id');
     const nombre = btn.closest('tr').querySelector('td:nth-child(2)').textContent;
     
+    // Puedes usar SweetAlert2 para un diálogo más bonito o el confirm nativo
     if(confirm(`¿Estás seguro de eliminar a ${nombre}? Esta acción no se puede deshacer.`)) {
-      btn.innerHTML = '<i class="material-icons">hourglass_empty</i> Eliminando...';
-      btn.disabled = true;
-      
-      fetch('/working/procedimientos/eliminar_usuario.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({id: id})
-      })
-      .then(response => response.json())
-      .then(data => {
-        if(data.success) {
-          const fila = btn.closest('tr');
-          fila.style.transition = 'all 0.3s';
-          fila.style.opacity = '0';
-          setTimeout(() => fila.remove(), 300);
-          
-          M.toast({
-            html: `Usuario eliminado correctamente`,
-            classes: 'green',
-            displayLength: 2000
-          });
-        } else {
-          throw new Error(data.error || 'Error al eliminar');
-        }
-      })
-      .catch(error => {
-        btn.innerHTML = '<i class="material-icons">delete</i> Borrar';
-        btn.disabled = false;
-        M.toast({
-          html: `Error: ${error.message}`,
-          classes: 'red',
-          displayLength: 4000
+        btn.innerHTML = '<i class="material-icons">hourglass_empty</i> Eliminando...';
+        btn.disabled = true;
+        
+        fetch('/working/procedimientos/eliminar_usuario.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({id: id})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                // Animación al eliminar
+                const fila = btn.closest('tr');
+                fila.style.transition = 'all 0.3s';
+                fila.style.opacity = '0';
+                setTimeout(() => fila.remove(), 300);
+                
+                M.toast({
+                    html: `Usuario eliminado correctamente`,
+                    classes: 'green',
+                    displayLength: 2000
+                });
+            } else {
+                throw new Error(data.error || 'Error al eliminar');
+            }
+        })
+        .catch(error => {
+            btn.innerHTML = '<i class="material-icons">delete</i> Borrar';
+            btn.disabled = false;
+            M.toast({
+                html: `Error: ${error.message}`,
+                classes: 'red',
+                displayLength: 4000
+            });
         });
-      });
     }
-  }
+}
 
-  // Función para editar fila
-  function editarFila(btn) {
+// Función para editar fila
+function editarFila(btn) {
     const fila = btn.closest('tr');
+    // Aquí implementa tu lógica de edición
+    // Muestra el botón Guardar y oculta el de Editar
     fila.querySelector('.btn-save').style.display = 'inline-block';
     btn.style.display = 'none';
-  }
+}
 
-  // Formulario crear producto
-  document.addEventListener("DOMContentLoaded", function () {
-    const form = document.getElementById("form-crear-producto");
 
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      console.log("✅ ¡Se hizo clic en el botón y se capturó el submit!");
 
-      const nombre = document.getElementById("nombre-producto").value;
-      const cantidad = document.getElementById("cantidad").value;
-      const precio = document.getElementById("precio").value;
-      const foto = document.getElementById("foto") ? document.getElementById("foto").value : '';
 
-      fetch("../procedimientos/insertar_producto.php", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: `nombre=${encodeURIComponent(nombre)}&cantidad=${cantidad}&precio=${precio}&foto=${encodeURIComponent(foto)}`
-      })
-      .then(response => response.text())
-      .then(data => {
-        console.log("📥 Respuesta del servidor:", data);
-        alert(data);
-      })
-      .catch(error => {
-        console.error("❌ Error en fetch:", error);
-      });
+
+  </script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.getElementById("form-crear-producto");
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    console.log("✅ ¡Se hizo clic en el botón y se capturó el submit!");
+
+    const nombre = document.getElementById("nombre-producto").value;
+    const cantidad = document.getElementById("cantidad").value;
+    const precio = document.getElementById("precio").value;
+    const foto = document.getElementById("foto") ? document.getElementById("foto").value : '';
+
+   fetch("../procedimientos/insertar_producto.php", {
+
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: `nombre=${encodeURIComponent(nombre)}&cantidad=${cantidad}&precio=${precio}&foto=${encodeURIComponent(foto)}`
+    })
+    .then(response => response.text())
+    .then(data => {
+      console.log("📥 Respuesta del servidor:", data);
+      alert(data);
+    })
+    .catch(error => {
+      console.error("❌ Error en fetch:", error);
     });
   });
-
-  // Eliminar producto
-  document.addEventListener("DOMContentLoaded", () => {
-    const btnEliminar = document.getElementById("btn-eliminar-producto");
-    const subseccionEliminar = document.getElementById("subseccion-eliminar");
-    const btnCargarLista = document.getElementById("btn-cargar-lista");
-    const contenedorLista = document.getElementById("lista-productos-eliminar");
-
-    btnEliminar.addEventListener("click", () => {
-      subseccionEliminar.style.display = "block";
-    });
-
-    btnCargarLista.addEventListener("click", () => {
-      fetch("procedimientos/obtener_productos.php")
-        .then(res => res.json())
-        .then(data => {
-          if (!Array.isArray(data)) {
-            contenedorLista.innerHTML = "<p>Error al obtener productos.</p>";
-            return;
-          }
-
-          let html = '<ul class="collection">';
-          data.forEach(prod => {
-            html += `
-              <li class="collection-item">
-                <div>
-                  ${prod.nomProd}
-                  <button class="btn red right" onclick="eliminarProducto('${prod.nomProd}')">
-                    Eliminar
-                  </button>
-                </div>
-              </li>
-            `;
-          });
-          html += '</ul>';
-          contenedorLista.innerHTML = html;
-        });
-    });
-  });
-
-  // function eliminarProducto(nombre) {
-  //   if (!confirm("¿Estás seguro de eliminar este producto?")) return;
-
-  //   fetch("working/procedimientos/eliminar_producto.php", {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-  //     body: "id=" + encodeURIComponent(nombre)
-  //   })
-  //   .then(res => res.json())
-  //   .then(data => {
-  //     alert(data.mensaje);
-  //     document.getElementById("btn-cargar-lista").click();
-  //   });
-  // }
-
-  // Actualizar producto
-  document.querySelectorAll('.form-actualizar-producto').forEach(form => {
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      const formData = new FormData(form);
-
-      fetch('/working/procedimientos/actualizar_producto.php', {
-        method: 'POST',
-        body: formData
-      })
-      .then(response => response.text())
-      .then(data => {
-        alert(data);
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        alert('❌ Error al actualizar producto.');
-      });
-    });
-  });
-
-  // Buscador actualizar producto
-  document.addEventListener('DOMContentLoaded', function() {
-    const inputBuscar = document.getElementById('buscar-actualizar');
-
-    if (!inputBuscar) return;
-
-    inputBuscar.addEventListener('input', function() {
-      const texto = this.value.toLowerCase();
-      const filas = document.querySelectorAll('#tabla-actualizar-producto tbody tr');
-
-      filas.forEach(fila => {
-        const contenido = fila.textContent.toLowerCase();
-        fila.style.display = contenido.includes(texto) ? '' : 'none';
-      });
-    });
-  });
+});
 </script>
+
+
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const btnEliminar = document.getElementById("btn-eliminar-producto");
+  const subseccionEliminar = document.getElementById("subseccion-eliminar");
+  const btnCargarLista = document.getElementById("btn-cargar-lista");
+  const contenedorLista = document.getElementById("lista-productos-eliminar");
+
+  btnEliminar.addEventListener("click", () => {
+    subseccionEliminar.style.display = "block";
+  });
+
+  btnCargarLista.addEventListener("click", () => {
+    fetch("procedimientos/obtener_productos.php")
+      .then(res => res.json())
+      .then(data => {
+        if (!Array.isArray(data)) {
+          contenedorLista.innerHTML = "<p>Error al obtener productos.</p>";
+          return;
+        }
+
+        let html = '<ul class="collection">';
+        data.forEach(prod => {
+          html += `
+            <li class="collection-item">
+              <div>
+                ${prod.nomProd}
+                <button class="btn red right" onclick="eliminarProducto('${prod.nomProd}')">
+                  Eliminar
+                </button>
+              </div>
+            </li>
+          `;
+        });
+        html += '</ul>';
+        contenedorLista.innerHTML = html;
+      });
+  });
+});
+
+function eliminarProducto(nombre) {
+  if (!confirm("¿Estás seguro de eliminar este producto?")) return;
+
+  fetch("procedimientos/eliminar_producto.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: "nombre=" + encodeURIComponent(nombre)
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert(data.mensaje);
+    document.getElementById("btn-cargar-lista").click(); // Recarga lista
+  });
+}
+</script>
+
+
+
+<script>
+document.querySelectorAll('.form-actualizar-producto').forEach(form => {
+  form.addEventListener('submit', function (e) {
+    e.preventDefault(); // Evita recarga
+
+    const formData = new FormData(form);
+
+    fetch('/working/procedimientos/actualizar_producto.php', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.text())
+    .then(data => {
+      alert(data); // Mostrar mensaje del procedimiento
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('❌ Error al actualizar producto.');
+    });
+  });
+});
+</script>
+<script>
+document.querySelectorAll('.form-actualizar-producto').forEach(form => {
+  form.addEventListener('submit', function (e) {
+    e.preventDefault(); // Evita recarga
+
+    const formData = new FormData(form);
+
+    fetch('/working/procedimientos/actualizar_producto.php', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.text())
+    .then(data => {
+      alert(data); // Mostrar mensaje del procedimiento
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('❌ Error al actualizar producto.');
+    });
+  });
+});
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const inputBuscar = document.getElementById('buscar-actualizar');
+
+  if (!inputBuscar) return;
+
+  inputBuscar.addEventListener('input', function() {
+    const texto = this.value.toLowerCase();
+    const filas = document.querySelectorAll('#tabla-actualizar-producto tbody tr');
+
+    filas.forEach(fila => {
+      const contenido = fila.textContent.toLowerCase();
+      fila.style.display = contenido.includes(texto) ? '' : 'none';
+    });
+  });
+});
+</script>
+
+
+
+
+</body>
+</html>
 
 
