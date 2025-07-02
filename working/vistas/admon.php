@@ -34,6 +34,9 @@ if(!isset($_SESSION['usuario'])){
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="/working/css/PgAdmon.css">
   <link rel="icon" href="/working/imagenes/logo_industro_.png">
+  <div class="bienvenida-admin">
+</div>
+
 </head>
 <body>
   <!-- Barra de navegación superior -->
@@ -84,12 +87,7 @@ if(!isset($_SESSION['usuario'])){
   <div class="container">
     <!-- Sección de Bienvenida (agregado ID) -->
     <div id="seccion-bienvenida">
-      <h4>Bienvenido, Administrador</h4>
-      <div class="card">
-        <div class="card-content">
-          <p>Busca la estadística que necesites.</p>
-        </div>
-      </div>
+        <img src="/working/imagenes/admin-avatar.png" alt="Admin Avatar">
     </div>
 
     <!-- Sección: Gestión de Personal -->
