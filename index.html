@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>INDUSTRO | Inicio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Merriweather&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box; 
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+  font-family: 'Merriweather', serif;
+  background-color: #001f33;
+  background-image:
+    radial-gradient(white 1px, transparent 1px),
+    radial-gradient(white 1px, transparent 1px);
+  background-size: 100px 100px, 80px 80px;
+  background-position: 0 0, 40px 40px;
+  color: white;
+  overflow-x: hidden;
+}
+
+
+
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 70px;
+      background: #001f33;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 30px;
+      z-index: 1000;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #00aaff;
+    }
+
+    nav a {
+      margin: 0 15px;
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+    }
+
+    nav a:hover,
+    nav a.active {
+      color: #FFCC00;
+    }
+
+    .hero {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 100px;
+      padding-left: 60px;
+      padding-right: 60px;
+      min-height: 100vh;
+    }
+
+    .hero-text {
+      max-width: 50%;
+      animation: slideIn 1s ease-out;
+    }
+
+    .hero-text h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 4.5rem;
+      color: #ffffff;
+    }
+
+    .hero-text h1 span {
+      color: #FFCC00;
+    }
+
+    .hero-text p {
+      font-size: 1.4rem;
+      margin: 20px 0 40px;
+      color: #ffffffdd;
+    }
+
+    .btn-ingresar {
+      background-color: #FFCC00;
+      color: #003049;
+      border: none;
+      padding: 1rem 2.5rem;
+      font-size: 1.2rem;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: bold;
+    }
+
+    .btn-ingresar:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px rgba(255, 204, 0, 0.9);
+    }
+
+    .hero-avatar {
+      max-width: 40%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 1.2s ease-in;
+    }
+
+    .hero-avatar img {
+      width: 600px;
+      max-width: 550px;
+      height: auto;
+      border-radius: 20px;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @media screen and (max-width: 768px) {
+      .hero {
+        flex-direction: column;
+        padding: 40px 20px;
+      }
+
+      .hero-text, .hero-avatar {
+        max-width: 100%;
+        text-align: center;
+      }
+
+      .hero-text h1 {
+        font-size: 3rem;
+      }
+
+      .hero-avatar img {
+        max-width: 250px;
+      }
+    }
+  
+    
+
+      .quienes-somos h2 {
+        font-size: 2.4rem;
+      }
+
+      .quienes-somos p {
+        font-size: 1.1rem;
+      }
+    
+
+
+  
+
+    .feature-card {
+      width: 100%;
+    }
+  
+
+
+  .contacto {
+    background-color: #001f33;
+    padding: 100px 60px;
+    color: white;
+    text-align: center;
+  }
+
+  .contacto h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    color: #FFCC00;
+    margin-bottom: 40px;
+  }
+
+  .formulario-contacto {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    max-width: 600px;
+    margin: auto;
+    animation: fadeIn 1s ease;
+  }
+
+  .formulario-contacto input,
+  .formulario-contacto textarea {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: 'Merriweather', serif;
+  }
+
+  .formulario-contacto button {
+    background-color: #FFCC00;
+    color: #001f33;
+    font-weight: bold;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .formulario-contacto button:hover {
+    background-color: #e6b800;
+  }
+
+  @media screen and (max-width: 768px) {
+    .contacto {
+      padding: 60px 20px;
+    }
+
+    .formulario-contacto {
+      width: 100%;
+    }
+  }
+
+
+  .contacto-icono {
+    background-color: #001f33;
+    padding: 100px 60px;
+    color: white;
+    text-align: center;
+  }
+
+  .contacto-icono h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    color: #FFCC00;
+    margin-bottom: 40px;
+  }
+
+  .icono-correo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    animation: fadeIn 1s ease;
+  }
+
+  .icono-correo img {
+    width: 80px;
+    height: 80px;
+  }
+
+  .icono-correo p {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffffffcc;
+  }
+
+  @media screen and (max-width: 768px) {
+    .contacto-icono {
+      padding: 60px 20px;
+    }
+
+    .icono-correo img {
+      width: 60px;
+      height: 60px;
+    }
+
+    .icono-correo p {
+      font-size: 1.2rem;
+    }
+  }
+
+
+  .quienes-somos {
+    background-color: #002b45;
+    padding: 100px 60px;
+    text-align: left;
+    animation: fadeUp 1.2s ease-out;
+  }
+
+  .quienes-somos h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    color: #FFCC00;
+    margin-bottom: 20px;
+    animation: slideInLeft 1s ease-out;
+  }
+
+  .quienes-somos p {
+    font-size: 1.3rem;
+    line-height: 1.7;
+    color: #ffffffdd;
+    max-width: 900px;
+    animation: fadeIn 1.5s ease;
+  }
+
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .quienes-somos {
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    .quienes-somos h2 {
+      font-size: 2.4rem;
+    }
+
+    .quienes-somos p {
+      font-size: 1.1rem;
+    }
+  }
+
+</style>
+</head>
+<body>
+
+  <!-- Barra de navegación -->
+  <header>
+    <div class="logo-text">INDUSTRO</div>
+    <nav>
+      <a href="#inicio">Inicio</a>
+      <a href="#quienes">Quiénes somos</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+  </header>
+
+  <!-- Hero principal -->
+  <section id="inicio" class="hero">
+    <div class="hero-text">
+      <h1>¡Bienvenido a <span>INDUSTRO</span>!</h1>
+      <p>Gestión inteligente para un crecimiento imparable.</p>
+      <button class="btn-ingresar" onclick="window.location.href='vistas/admon.php'">Ingresar</button>
+    </div>
+    <div class="hero-avatar">
+      <img src="ana.png" alt="Avatar de bienvenida">
+    </div>
+  </section>
+
+
+  <!-- Sección Quiénes Somos -->
+  <section id="quienes" class="quienes-somos">
+    <div class="container">
+      <h2>¿Quiénes somos?</h2>
+      <p>En <strong>INDUSTRO</strong>, somos un equipo apasionado por transformar lo cotidiano en soluciones inteligentes. Integramos automatización, organización de datos y un diseño centrado en el usuario para ayudarte a alcanzar un crecimiento imparable.</p>
+    </div>
+  </section>
+
+
+<!-- Sección Contacto -->
+<section id="contacto" class="contacto-icono">
+  <div class="container">
+    <h2>Contáctanos</h2>
+    <div class="icono-correo">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Gmail_Icon.png" alt="Gmail Icon">
+      <p>industro.contacto@gmail.com</p>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>
