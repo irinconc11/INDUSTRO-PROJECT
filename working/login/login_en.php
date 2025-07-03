@@ -8,7 +8,7 @@ $conexion = mysqli_connect($servidor, $usuario, $clave, $baseDeDatos);
 $conexion->set_charset("utf8");
 
     if (!$conexion) {
-        die("Connetion error: " . mysqli_connect_error());
+        die("Connection error: " . mysqli_connect_error());
     }
 
 $mensajeError = '';
@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['ingresar'])) {
         if (empty($usuario) || empty($clave) || empty($rol)) {
             $mensajeError = '<div class="alert alert-danger mx-auto custom-alert" role="alert"><b>All fields are required</b></div>';
         } else {
-            $stmt = $conexion->prepare("SELECT * FROM registro WHERE nomUsuario = ? AND id_rol = ?");
+            $stmt = $conexion->prepare("SELECT id, password, email FROM registro WHERE nomUsuario = ? AND id_rol = ?");
             $stmt->bind_param("si", $usuario, $rol);
             $stmt->execute();
             $resultado = $stmt->get_result();   
@@ -31,7 +31,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['ingresar'])) {
                 if (password_verify($clave, $datos->password)){
                     session_start();
                     $_SESSION['usuario'] = $usuario;
+                    $_SESSION['id'] = $datos->id;
                     $_SESSION['rol'] = $datos->id_rol;
+                    $_SESSION['email'] = $datos->email;
 
                     if ($datos->id_rol == 1) {  
                         header("location:/working/vistas/admin.php");
