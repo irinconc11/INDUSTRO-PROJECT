@@ -1,4 +1,4 @@
-/* Estilos adicionales para el carrusel de análisis */
+
 .seccion-analisis {
   display: none;
   padding: 20px;
@@ -7,6 +7,11 @@
 .carousel-analisis {
   height: 450px;
   margin: 20px 0;
+}
+
+
+#volver-formulario {
+  display: none;
 }
 
 .carousel-item {
@@ -183,6 +188,9 @@ main.main-content {
   box-shadow: 0 1px 0 0 #FFCC00 !important;
 }
 
+
+
+
 .botones-formulario {
   display: flex;
   justify-content: space-between;
@@ -206,12 +214,25 @@ main.main-content {
   color: #084D6E !important;
 }
 
+.carousel .carousel-item .download-btn {
+  position: relative;
+  z-index: 1001; 
+  margin-top: 10px;
+}
+.carousel .indicators {
+  z-index: 1000 !important; 
+}
+
+.carousel .indicators {
+  display: none;
+}
+
 .btn.blue:hover {
   color: #FFCC00 !important;
   background-color: #084D6E !important;
 }
 
-/* DROPDOWN ESTILO EMPLEADO */
+
 ul#dropdown-empleado {
   background-color: #084D6E;
   border-radius: 4px;
@@ -252,7 +273,7 @@ ul#dropdown-empleado li:hover > a i.material-icons {
   color: #FFCC00 !important;
 }
 
-/* RESPONSIVE */
+
 @media only screen and (max-width: 992px) {
   .sidenav-trigger {
     display: block !important;
