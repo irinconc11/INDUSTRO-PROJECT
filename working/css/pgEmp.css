@@ -55,16 +55,11 @@
   background-color: #2c3e50 !important;
 }
 
-body {
-  font-family: 'Roboto', sans-serif;
-  display: flex;
-  min-height: 100vh;
-  flex-direction: column;
-  background-repeat: repeat;
-  background-image: url('/working/imagenes/fondo.png');
-  background-size: cover;
-  background-position: center;
+body {  
+  background: radial-gradient(circle at center, #084D6E 0%, #052F4A 50%, #021E30 100%);
   background-attachment: fixed;
+  background-size: cover;
+  color: black;
 }
 
 .nav-custom {
