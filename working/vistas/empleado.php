@@ -1,11 +1,13 @@
 <?php
 session_start();
-
 if (!isset($_SESSION['usuario'])) {
-  header('location:/working/login/login_es.php');
-  exit();
+    header('location:/working/login/login_es.php');
+    exit();
 }
+$nomUsuario = $_SESSION['usuario'];
+$email = $_SESSION['email'];
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -39,7 +41,8 @@ if (!isset($_SESSION['usuario'])) {
     <ul class="right hide-on-med-and-down">
       <li>
         <a class="dropdown-trigger white-text" href="#!" data-target="dropdown-empleado">
-          <i class="material-icons left">account_circle</i>rocky
+<i class="material-icons left">account_circle</i><?php echo htmlspecialchars($nomUsuario); ?>
+
           <i class="material-icons right">arrow_drop_down</i>
         </a>
       </li>
@@ -56,8 +59,9 @@ if (!isset($_SESSION['usuario'])) {
 <ul id="mobile-sidebar" class="sidenav sidenav-custom">
   <li>
     <div class="user-view">
-      <a href="#"><span class="white-text name">rocky</span></a>
-      <a href="#"><span class="white-text email">rocky@gmail.com</span></a>
+<a href="#"><span class="white-text name"><?php echo htmlspecialchars($nomUsuario); ?></span></a>
+<a href="#"><span class="white-text email"><?php echo htmlspecialchars($email); ?></span></a>
+
     </div>
   </li>
   <li><a href="#!" class="mostrar-formulario"><i class="material-icons">insert_chart</i>Registro de Producción</a></li>
@@ -70,15 +74,7 @@ if (!isset($_SESSION['usuario'])) {
     <div class="row">
       <div class="input-field col s12">
         <select id="producto" required>
-          <option value="" disabled selected>Seleccione un producto</option>
-          <option value="6">cinturones</option>
-          <option value="7">bolsos</option>
-          <option value="8">tacones</option>
-          <option value="9">camisa</option>
-          <option value="10">gaban</option>
-          <option value="11">corbata</option>
-          <option value="12">3</option>
-          <option value="13">Protector Lunar</option>
+<option value="" disabled selected>Seleccione un producto</option>
         </select>
         <label>Producto</label>
       </div>
@@ -141,15 +137,6 @@ if (!isset($_SESSION['usuario'])) {
 
   </div>
 
-  <div class="carousel-fixed-item center">
-    <a class="btn btn-carousel waves-effect white grey-text darken-text-2 btn-prev">
-      <i class="material-icons">chevron_left</i>
-    </a>
-    <a class="btn btn-carousel waves-effect white grey-text darken-text-2 btn-next">
-      <i class="material-icons">chevron_right</i>
-    </a>
-  </div>
-</div>
 
 
 <div class="carousel-fixed-item center">
@@ -175,12 +162,37 @@ if (!isset($_SESSION['usuario'])) {
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-  console.log('✅ Código cargado correctamente');
-
-window.onload = function() {
+document.addEventListener('DOMContentLoaded', function() {
   M.Sidenav.init(document.querySelectorAll('.sidenav'));
   M.FormSelect.init(document.querySelectorAll('select'));
   M.Dropdown.init(document.querySelectorAll('.dropdown-trigger'), { coverTrigger: false });
+
+
+async function cargarProductos() {
+  try {
+    const res = await fetch('/working/procedimientos/obtener_productos.php');
+    const productos = await res.json();
+
+    const select = document.getElementById('producto');
+    select.innerHTML = '<option value="" disabled selected>Seleccione un producto</option>';
+
+    productos.forEach(prod => {
+      const option = document.createElement('option');
+      option.value = prod.idProd;
+      option.textContent = prod.nomProd;
+      select.appendChild(option);
+    });
+
+    M.FormSelect.init(select);
+  } catch (error) {
+    console.error('Error cargando productos:', error);
+    M.toast({ html: '⚠️ No se pudo cargar la lista de productos' });
+  }
+}
+
+cargarProductos();
+
+
 
   const formulario = document.getElementById('formularioProduccion');
   const analisis = document.getElementById('seccion-analisis');
@@ -191,68 +203,48 @@ window.onload = function() {
   let graficas = { diaria: null, mensual: null, productos: null };
   let intervaloRefresco = null;
   let carrusel = null;
+  let carruselInicializado = false;
 
-btnFormulario.forEach(btn => {
-  btn.addEventListener('click', () => {
+  btnFormulario.forEach(btn => {
+    btn.addEventListener('click', () => {
+      formulario.style.display = 'block';
+      analisis.style.display = 'none';
+      btnVolver.style.display = 'none';
+      clearInterval(intervaloRefresco);
+    });
+  });
+
+  btnAnalisis.forEach(btn => {
+    btn.addEventListener('click', () => {
+      formulario.style.display = 'none';
+      analisis.style.display = 'block';
+      btnVolver.style.display = 'inline-block';
+      analisis.scrollIntoView({ behavior: 'smooth' });
+
+      if (!carruselInicializado) {
+        carrusel = M.Carousel.init(document.querySelector('.carousel'), {
+          fullWidth: true,
+          indicators: true
+        });
+        document.querySelector('.btn-next').onclick = () => carrusel.next();
+        document.querySelector('.btn-prev').onclick = () => carrusel.prev();
+        carruselInicializado = true;
+      }
+
+      cargarGraficas();
+      if (intervaloRefresco) clearInterval(intervaloRefresco);
+      intervaloRefresco = setInterval(() => {
+        cargarGraficas();
+      }, 30000);
+    });
+  });
+
+  btnVolver.addEventListener('click', () => {
     formulario.style.display = 'block';
     analisis.style.display = 'none';
-    document.getElementById('volver-formulario').style.display = 'none';  // 👈 Ocultar botón
+    btnVolver.style.display = 'none';
     clearInterval(intervaloRefresco);
   });
-});
-
-btnAnalisis.forEach(btn => {
-  btn.addEventListener('click', () => {
-    formulario.style.display = 'none';
-    analisis.style.display = 'block';
-    document.getElementById('volver-formulario').style.display = 'block';  // 👈 Mostrar botón
-    analisis.scrollIntoView({ behavior: 'smooth' });
-
-    const carrusel = M.Carousel.init(document.querySelector('.carousel'), {
-      fullWidth: true,
-      indicators: true
-    });
-
-    document.querySelector('.btn-next').onclick = () => carrusel.next();
-    document.querySelector('.btn-prev').onclick = () => carrusel.prev();
-
-    cargarGraficas().then(() => {
-      inicializarBotonesDescarga();
-    });
-
-    if (intervaloRefresco) clearInterval(intervaloRefresco);
-    intervaloRefresco = setInterval(() => {
-      cargarGraficas().then(() => {
-        inicializarBotonesDescarga();
-      });
-    }, 30000);
-  });
-});
-
-btnVolver.addEventListener('click', () => {
-  formulario.style.display = 'block';
-  analisis.style.display = 'none';
-  document.getElementById('volver-formulario').style.display = 'none';  // 👈 Ocultar botón
-  clearInterval(intervaloRefresco);
-});
-
-
-  function inicializarBotonesDescarga() {
-    document.querySelectorAll('.download-btn').forEach(btn => {
-      btn.onclick = () => {
-        const canvasId = btn.getAttribute('data-canvas');
-        const canvas = document.getElementById(canvasId);
-        if (canvas) {
-          const link = document.createElement('a');
-          link.href = canvas.toDataURL('image/png');
-          link.download = `${canvasId}.png`;
-          link.click();
-        } else {
-          M.toast({ html: '❌ Gráfica no encontrada' });
-        }
-      };
-    });
-  }
 
   async function cargarGraficas() {
     try {
@@ -263,7 +255,11 @@ btnVolver.addEventListener('click', () => {
       if (graficas.mensual) graficas.mensual.destroy();
       if (graficas.productos) graficas.productos.destroy();
 
-      graficas.diaria = new Chart(document.getElementById('graficaDiaria').getContext('2d'), {
+      const ctxDiaria = document.getElementById('graficaDiaria').getContext('2d');
+      const ctxMensual = document.getElementById('graficaMensual').getContext('2d');
+      const ctxProductos = document.getElementById('graficaProductos').getContext('2d');
+
+      graficas.diaria = new Chart(ctxDiaria, {
         type: 'line',
         data: {
           labels: data.diaria.map(item => item.fecha),
@@ -278,7 +274,7 @@ btnVolver.addEventListener('click', () => {
         options: { responsive: true, maintainAspectRatio: false }
       });
 
-      graficas.mensual = new Chart(document.getElementById('graficaMensual').getContext('2d'), {
+      graficas.mensual = new Chart(ctxMensual, {
         type: 'bar',
         data: {
           labels: data.mensual.map(item => `Sem ${item.semana}`),
@@ -291,7 +287,7 @@ btnVolver.addEventListener('click', () => {
         options: { responsive: true, maintainAspectRatio: false }
       });
 
-      graficas.productos = new Chart(document.getElementById('graficaProductos').getContext('2d'), {
+      graficas.productos = new Chart(ctxProductos, {
         type: 'doughnut',
         data: {
           labels: data.productos.map(item => item.producto),
@@ -306,30 +302,29 @@ btnVolver.addEventListener('click', () => {
       inicializarBotonesDescarga();
 
     } catch (error) {
-      console.error('Error cargando gráficas:', error);
-      M.toast({ html: '⚠️ Error cargando análisis' });
+      console.error('Error al cargar gráficas:', error);
+      M.toast({ html: '⚠️ No se pudieron cargar las gráficas' });
     }
   }
 
   function inicializarBotonesDescarga() {
-  document.querySelectorAll('.download-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const canvasId = btn.getAttribute('data-canvas');
-      const canvas = document.getElementById(canvasId);
-      if (!canvas) {
-        M.toast({ html: '❌ Gráfica no encontrada' });
-        return;
-      }
-      const link = document.createElement('a');
-      link.href = canvas.toDataURL('image/png');
-      link.download = `${canvasId}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+    document.querySelectorAll('.download-btn').forEach(btn => {
+      btn.onclick = () => {
+        const canvasId = btn.getAttribute('data-canvas');
+        const canvas = document.getElementById(canvasId);
+        if (canvas) {
+          const link = document.createElement('a');
+          link.href = canvas.toDataURL('image/png');
+          link.download = `${canvasId}.png`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        } else {
+          M.toast({ html: '❌ Gráfica no encontrada' });
+        }
+      };
     });
-  });
-}
-
+  }
 
   document.getElementById('btnRegistrar').addEventListener('click', async () => {
     const producto = document.getElementById('producto').value;
@@ -350,23 +345,32 @@ btnVolver.addEventListener('click', () => {
 
       if (data.error) throw new Error(data.error);
 
-M.toast({
-  html: `
-    <span style="display: flex; align-items: center;">
-      <i class="material-icons" style="color: #FFCC00; margin-right: 10px;">check_circle</i>
-      <span style="color: white; font-weight: bold;">Producción registrada con éxito</span>
-    </span>
-  `,
-  classes: 'rounded',
-  displayLength: 3000
-});
+      M.toast({
+        html: `
+          <span style="display: flex; align-items: center;">
+            <i class="material-icons" style="color: #FFCC00; margin-right: 10px;">check_circle</i>
+            <span style="color: white; font-weight: bold;">Producción registrada con éxito</span>
+          </span>
+        `,
+        
+        classes: 'rounded',
+        displayLength: 3000
+        
+      });
 
+      // Limpiar formulario después de registrar
+document.getElementById('producto').selectedIndex = 0;
+document.getElementById('cantidad').value = '';
+M.FormSelect.init(document.querySelectorAll('select')); // Refrescar selector Materialize
+
+      
     } catch (error) {
       M.toast({ html: `⚠️ ${error.message}` });
     }
   });
 
-};
+});
 </script>
+
 </body>
 </html>
