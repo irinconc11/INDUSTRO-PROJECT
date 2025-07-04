@@ -1,4 +1,4 @@
-<?php
+    <?php
 $servidor = "localhost";
 $usuario = "root";
 $clave = "";
@@ -22,33 +22,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['ingresar'])) {
         if (empty($usuario) || empty($clave) || empty($rol)) {
             $mensajeError = '<div class="alert alert-danger mx-auto custom-alert" role="alert"><b>Todos los campos son requeridos</b></div>';
         } else {
-            $stmt = $conexion->prepare("SELECT id, password , id_rol, email FROM registro WHERE nomUsuario = ? AND id_rol = ?");
-            $stmt->bind_param("si", $usuario, $rol);
-            $stmt->execute();
-            $resultado = $stmt->get_result();   
+           $stmt = $conexion->prepare("SELECT id, nomUsuario, password, id_rol, email FROM registro WHERE nomUsuario = ? AND id_rol = ?");
+$stmt->bind_param("si", $usuario, $rol);
+$stmt->execute();
+$resultado = $stmt->get_result();
 
-            if ($datos = $resultado->fetch_object()) {
-                if (password_verify($clave, $datos->password)){
-                    session_start();
-                    
-                    $_SESSION['usuario'] = $usuario;
-                    $_SESSION['id'] = $datos->id;
-                    $_SESSION['rol'] = $datos->id_rol;
-                    $_SESSION['email'] = $datos->email;
+if ($datos = $resultado->fetch_object()) {
+    if (password_verify($clave, $datos->password)) {
+        session_start();
+        
+        $_SESSION['usuario'] = $datos->nomUsuario;  // ✅ Aquí el nombre correcto de la BD
+        $_SESSION['id'] = $datos->id;
+        $_SESSION['rol'] = $datos->id_rol;
+        $_SESSION['email'] = $datos->email;
 
-                    if ($datos->id_rol == 1) {  
-                        header("location:/working/vistas/admon.php");
-                        exit();
-                    } elseif ($datos->id_rol == 2) {
-                        header("location:/working/vistas/empleado.php");
-                        exit();
-                    }
-                } else {
-                    $mensajeError = '<div class="alert alert-danger mx-auto custom-alert" role="alert"><b>Contraseña incorrecta.</b></div>';
-                }
-            } else {
-                $mensajeError = '<div class="alert alert-danger mx-auto custom-alert" role="alert"><b>Usuario o rol no válido.</b></div>';
-            }
+        if ($datos->id_rol == 1) {  
+            header("location:/working/vistas/admon.php");
+            exit();
+        } elseif ($datos->id_rol == 2) {
+            header("location:/working/vistas/empleado.php");
+            exit();
+        }
+    } else {
+        $mensajeError = '<div class="alert alert-danger mx-auto custom-alert" role="alert"><b>Contraseña incorrecta.</b></div>';
+    }
+} else {
+    $mensajeError = '<div class="alert alert-danger mx-auto custom-alert" role="alert"><b>Usuario o rol no válido.</b></div>';
+}
+
         }
     }
 }
@@ -95,8 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['ingresar'])) {
                     <option value= "ESP" id="esp">ESP</option>
                 </select>
             </div>  
-            <a class="Forgot-Password" href="/working/authentication/passChange.php">¿Olvidaste tu contraseña?</a>
-            <a class="Forgot-Password" href="/working/authentication/registro.php">Crear una cuenta</a>      
+            <a class="Forgot-Password" href="/working/authentication/passChange.php">¿Olvidaste tu contraseña?</a> 
             <input type="submit" class="LButtom" id="loginButton" name="ingresar" value="Ingresar">
             
         </form>
